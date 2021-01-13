@@ -31,11 +31,13 @@ def next_move(game_state, level):
     <game_state> is a sequence of digits of 0..5. Digit at position k must be <= k (where first position means k=1)
     <level> is integer in 0..2
     """
-    result = None  # dictionary
+    result = {}  # dictionary
     try:
         # check and convert input
         if len(game_state) != 5:
             raise Error('game_state must be 5 characters long')
+            # raise Error('game_state must be 5 characters long', "foo", 5) # -- this works
+            # raise Error('game_state must be 5 characters long', "foo", eeee='dummy', dddd=5) # -- this not
         rows = []
         for k in range(5):
             c = game_state[k]
@@ -49,11 +51,8 @@ def next_move(game_state, level):
             raise Error('game_state must contain at least 1 match')
         if not (level in range(3)):
             raise Error('level must be in 0..2')
-        # quit or choose a random move
-        if sum(rows) == 1:
-            # quit
-            result = {"end of game": "You won! :-)"}
-        else:
+        # choose a random move or quit
+        if sum(rows) > 1:
             # random move
             non_zeros = [k for k in range(5) if rows[k] > 0]  # all indices with value > 0
             i = rand.choice(non_zeros)  # choose such index
@@ -64,7 +63,11 @@ def next_move(game_state, level):
             result = {"row number": i + 1, "number of matches": n}
             assert sum(rows) - n > 0
             if sum(rows) - n == 1:
-                result["end of game"] = "I won! :-("
+                result["end of game"] = "You lost! :-("
+        else:
+            # quit
+            assert sum(rows) == 1
+            result = {"end of game": "You won! :-)"}
     except Error as e:
         result["error"] = str(e)
     finally:
