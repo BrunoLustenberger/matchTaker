@@ -1,6 +1,13 @@
+""" Main module of mathTaker app
+    Version 0.0.1 *
+"""
+
 import random
 import json
+
 from flask import Flask
+
+from models import game_state
 
 app = Flask(__name__)
 
@@ -8,7 +15,7 @@ rand = random.Random()
 rand.seed(a=1)  # a=1 for reproducibility
 
 
-class Error(Exception):
+class _Error(Exception):
     """Class for exceptions of this module. All these exceptions should be handled internally"""
     pass
 
@@ -18,39 +25,23 @@ def hello_world():
     return 'Hello from MatchTaker. Currently only API!'
 
 
-@app.route('/next_move', defaults={'game_state': '12345', 'level': 1})
-@app.route('/next_move/<game_state>', defaults={'level': 1})
-@app.route('/next_move/<game_state>/<int:level>')
-def next_move(game_state, level):
+@app.route('/next_move', defaults={'rows_state': '12345', 'level': 1})
+@app.route('/next_move/<rows_state>', defaults={'level': 1})
+@app.route('/next_move/<rows_state>/<int:level>')
+def next_move(rows_state, level):
     """
-    /next_move [/<game_state> [/<level>] ]
+    /next_move [/<rows_state> [/<level>] ]
     Examples:
         /next_move
         /next_move/10340
         /next_move/10340/2
-    <game_state> is a sequence of digits of 0..5. Digit at position k must be <= k (where first position means k=1)
+    <rows_state> is a sequence of digits of 0..5. Digit at position k must be <= k (where first position means k=1)
     <level> is integer in 0..2
     """
-    result = {}  # dictionary
+    result = {}
     try:
         # check and convert input
-        if len(game_state) != 5:
-            raise Error('game_state must be 5 characters long')
-            # raise Error('game_state must be 5 characters long', "foo", 5) # -- this works
-            # raise Error('game_state must be 5 characters long', "foo", eeee='dummy', dddd=5) # -- this not
-        rows = []
-        for k in range(5):
-            c = game_state[k]
-            if not ('0' <= c <= '5'):
-                raise Error('game_state must consist of digits in 0..5')
-            x = int(c)
-            if not (x <= k+1):
-                raise Error(f"row {k+1} must contain <= {k+1} matches")
-            rows.append(x)
-        if sum(rows) == 0:
-            raise Error('game_state must contain at least 1 match')
-        if not (level in range(3)):
-            raise Error('level must be in 0..2')
+        rows = game_state.GameState(list(rows_state)).get_rows()
         # choose a random move or quit
         if sum(rows) > 1:
             # random move
@@ -68,11 +59,12 @@ def next_move(game_state, level):
             # quit
             assert sum(rows) == 1
             result = {"end of game": "You won! :-)"}
-    except Error as e:
+    except (_Error, game_state.Error) as e:
         result["error"] = str(e)
     finally:
-        # return result
-        return json.dumps(result)
+        pass  # no return here, see PEP 601
+    # return result
+    return json.dumps(result)
 
 
 if __name__ == '__main__':
