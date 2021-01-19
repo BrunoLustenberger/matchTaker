@@ -1,5 +1,7 @@
 """ Main module of mathTaker app
     Version 0.0.1 *
+
+    todo: distinguish row index (starts at 0) and row number (starts at 1)
 """
 
 import random
@@ -35,7 +37,7 @@ def next_move(rows_state, level):
         /next_move
         /next_move/10340
         /next_move/10340/2
-    <rows_state> is a sequence of digits of 0..5. Digit at position k must be <= k (where first position means k=1)
+    <rows_state> is a sequence of digits of 0..5. Digit at index k must be <= k+1 (where first index is k=0)
     <level> is integer in 0..2
     """
     result = {}

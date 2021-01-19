@@ -1,0 +1,14 @@
+2021-01-19 12:11:42,867 | INFO |  test_game_state,15 
+ test_1init
+2021-01-19 12:18:04,199 | INFO |  test_game_state,15 
+ test_1init
+2021-01-19 12:30:31,615 | INFO |  test_game_state,15 
+ test_1init
+2021-01-19 12:31:13,110 | INFO |  test_game_state,15 
+ test_1init
+2021-01-19 12:32:35,848 | INFO |  test_game_state,15 
+ test_1init
+2021-01-19 12:35:29,128 | INFO |  test_game_state,15 
+ test_1init
+2021-01-19 12:35:29,129 | INFO |  test_game_state,48 
+ test_2normalize
