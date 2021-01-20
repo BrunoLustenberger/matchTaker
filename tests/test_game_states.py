@@ -2,7 +2,7 @@ import unittest
 import logging
 
 from utils import mylogconfig
-from models.game_state import *
+from models.game_states import *
 
 mylogconfig.standard_rot(level=logging.INFO)
 logger = logging.getLogger(__name__)

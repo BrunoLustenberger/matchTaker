@@ -12,3 +12,7 @@
  test_1init
 2021-01-19 12:35:29,129 | INFO |  test_game_state,48 
  test_2normalize
+2021-01-19 21:19:49,667 | INFO |  test_game_state,15 
+ test_1init
+2021-01-19 21:19:49,668 | INFO |  test_game_state,48 
+ test_2normalize

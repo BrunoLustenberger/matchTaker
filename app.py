@@ -4,22 +4,13 @@
     todo: distinguish row index (starts at 0) and row number (starts at 1)
 """
 
-import random
 import json
 
 from flask import Flask
 
-from models import game_state
+from models import game_states, solver
 
 app = Flask(__name__)
-
-rand = random.Random()
-rand.seed(a=1)  # a=1 for reproducibility
-
-
-class _Error(Exception):
-    """Class for exceptions of this module. All these exceptions should be handled internally"""
-    pass
 
 
 @app.route('/')
@@ -43,25 +34,17 @@ def next_move(rows_state, level):
     result = {}
     try:
         # check and convert input
-        rows = game_state.GameState(list(rows_state)).get_rows()
-        # choose a random move or quit
-        if sum(rows) > 1:
-            # random move
-            non_zeros = [k for k in range(5) if rows[k] > 0]  # all indices with value > 0
-            i = rand.choice(non_zeros)  # choose such index
-            max_n = min(3, rows[i])  # max number of matches to be taken at this index
-            if len(non_zeros) == 1:  # special case: only this row has matches --> must not take all
-                max_n = min(max_n, rows[i] - 1)
-            n = rand.randint(1, max_n)  # choose number of matches at this index
-            result = {"row number": i + 1, "number of matches": n}
-            assert sum(rows) - n > 0
-            if sum(rows) - n == 1:
-                result["end of game"] = "You lost! :-("
-        else:
-            # quit
-            assert sum(rows) == 1
+        game_state = game_states.GameState(list(rows_state))
+        # compute next move
+        row_index, match_count, game_continues = solver.solve(game_state, level)
+        # compose result
+        if not game_continues and match_count == 0:
             result = {"end of game": "You won! :-)"}
-    except (_Error, game_state.Error) as e:
+        else:
+            result = {"row index": row_index, "number of matches": match_count}
+            if not game_continues:
+                result["end of game"] = "You lost! :-("
+    except (solver.Error, game_states.Error) as e:
         result["error"] = str(e)
     finally:
         pass  # no return here, see PEP 601
