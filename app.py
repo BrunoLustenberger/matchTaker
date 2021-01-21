@@ -18,8 +18,8 @@ def hello_world():
     return 'Hello from MatchTaker. Currently only API!'
 
 
-@app.route('/next_move', defaults={'rows_state': '12345', 'level': 1})
-@app.route('/next_move/<rows_state>', defaults={'level': 1})
+@app.route('/next_move', defaults={'rows_state': '12345', 'level': 0})
+@app.route('/next_move/<rows_state>', defaults={'level': 0})
 @app.route('/next_move/<rows_state>/<int:level>')
 def next_move(rows_state, level):
     """
@@ -34,15 +34,18 @@ def next_move(rows_state, level):
     result = {}
     try:
         # check and convert input
-        game_state = game_states.GameState(list(rows_state))
+        rows = list(rows_state)
+        game_states.Error.check(all([('0' <= rows[k] <= '5') for k in range(len(rows))]), "rows_state must contain digits in 0..5")
+        rows = [int(rows[k]) for k in range(len(rows))]
+        game_state = game_states.GameState(rows)
         # compute next move
         row_index, match_count, game_continues = solver.solve(game_state, level)
         # compose result
-        if not game_continues and match_count == 0:
+        if game_continues == -1:
             result = {"end of game": "You won! :-)"}
         else:
             result = {"row index": row_index, "number of matches": match_count}
-            if not game_continues:
+            if game_continues == 0:
                 result["end of game"] = "You lost! :-("
     except (solver.Error, game_states.Error) as e:
         result["error"] = str(e)

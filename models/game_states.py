@@ -28,7 +28,7 @@ class GameState:
         self.rows = []
         for k in range(5):
             x = rows[k]
-            Error.check(isinstance(x,int), "rows must contain integers only")
+            Error.check(isinstance(x, int), "rows must contain integers only")
             Error.check(0 <= x <= 5, 'rows must consist of digits in 0..5')
             Error.check(x <= k+1, f"row at index {k} must contain <= {k + 1} matches")
             self.rows.append(x)
