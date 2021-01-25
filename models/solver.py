@@ -3,7 +3,8 @@
 
 """
 import random
-from models.game_states import *
+from models.game_states import GameState
+from models.game_trees import current_tree
 
 rand = random.Random()
 rand.seed(a=1)  # a=1 for reproducibility
@@ -36,7 +37,7 @@ def solve(game_state: GameState, level: int) -> (int, int, int):
                         3 : game continues -- you have a safe strategy to win
     """
     Error.check(0 <= level <= 2, "level must be an integer in 0..2")
-    # init to" you won"
+    # init to "you won"
     row_index = 0
     match_count = 0
     game_continues = -1
@@ -45,6 +46,7 @@ def solve(game_state: GameState, level: int) -> (int, int, int):
     # sub functions
 
     def random_move():
+        """ Chooses randomly one of the possible moves."""
         nonlocal row_index, match_count
         non_zeros = [k for k in range(5) if rows[k] > 0]  # all indices with value > 0
         row_index = rand.choice(non_zeros)  # choose such index
@@ -54,14 +56,23 @@ def solve(game_state: GameState, level: int) -> (int, int, int):
         match_count = rand.randint(1, max_n)  # choose number of matches at this index
 
     def most_first():
-        nonlocal row_index, match_count
         """ Chooses the row with the most matches and takes as many matches as possible."""
+        nonlocal row_index, match_count
         p = game_state.normalize()
-        rows = game_state.get_rows()
-        match_count = min(3, rows[4])  # max number of matches
-        if rows[3] == 0:  # special case: only this row has matches --> must not take all
-            match_count = min(match_count, rows[4] - 1)
+        sorted_rows = game_state.get_rows()
+        match_count = min(3, sorted_rows[4])  # max number of matches
+        if sorted_rows[3] == 0:  # special case: only this row has matches --> must not take all
+            match_count = min(match_count, sorted_rows[4] - 1)
         row_index = p.inv()(4)
+        
+    def best_move():
+        """ Chooses best possible move, if several exist, choose one randomly."""
+        nonlocal row_index, match_count
+        p = game_state.normalize()
+        node = current_tree().find(game_state)
+        row_index, match_count, _ = node.select_move()
+        row_index = p.inv()(row_index)
+        # todo: query winning flag
 
     # main body continued
 
@@ -72,7 +83,7 @@ def solve(game_state: GameState, level: int) -> (int, int, int):
         elif level == 1:
             most_first()
         else:
-            pass
+            best_move()
         assert 1 <= match_count <= min(3, rows[row_index])
         # check whether I won or game continues
         assert sum(rows) - match_count > 0

@@ -39,6 +39,11 @@ class GameState:
         """
         return copy.deepcopy(self.rows)
 
+    def get_total_count(self):
+        """ Returns total count of all matches
+        """
+        return sum(self.rows)
+
     def normalize(self):
         """ Sorts the internal rows list and returns the permutation generating this sort order.
         """
@@ -55,3 +60,7 @@ class GameState:
             Param p: The permutation that was returned by the call to normalize()
         """
         self.rows = p.inv().apply(self.rows)
+
+
+class GameStateSuccessors:
+    pass
