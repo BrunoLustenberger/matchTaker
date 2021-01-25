@@ -16,3 +16,63 @@
  test_1init
 2021-01-19 21:19:49,668 | INFO |  test_game_state,48 
  test_2normalize
+2021-01-25 11:05:10,390 | INFO |  test_game_states,15 
+ test_1init
+2021-01-25 11:05:10,391 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-25 11:05:10,392 | INFO |  test_game_states,60 
+ test_3ordering
+2021-01-25 11:07:49,108 | INFO |  test_game_states,15 
+ test_1init
+2021-01-25 11:07:49,108 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-25 11:07:49,108 | INFO |  test_game_states,60 
+ test_3ordering
+2021-01-25 13:06:43,701 | INFO |  test_game_states,15 
+ test_1init
+2021-01-25 13:06:43,701 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-25 13:06:43,701 | INFO |  test_game_states,60 
+ test_3ordering
+2021-01-25 13:06:43,702 | INFO |  test_game_states,74 
+ test_4successors_and_take
+2021-01-25 13:08:39,473 | INFO |  test_game_states,15 
+ test_1init
+2021-01-25 13:08:39,473 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-25 13:08:39,473 | INFO |  test_game_states,60 
+ test_3ordering
+2021-01-25 13:08:39,474 | INFO |  test_game_states,74 
+ test_4successors_and_take
+2021-01-25 13:13:08,202 | INFO |  test_game_states,15 
+ test_1init
+2021-01-25 13:13:08,202 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-25 13:13:08,202 | INFO |  test_game_states,60 
+ test_3ordering
+2021-01-25 13:13:08,203 | INFO |  test_game_states,74 
+ test_4successors_and_take
+2021-01-25 13:19:31,253 | INFO |  test_game_states,15 
+ test_1init
+2021-01-25 13:19:31,253 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-25 13:19:31,253 | INFO |  test_game_states,60 
+ test_3ordering
+2021-01-25 13:19:31,253 | INFO |  test_game_states,74 
+ test_4successors_and_take
+2021-01-25 13:22:07,350 | INFO |  test_game_states,15 
+ test_1init
+2021-01-25 13:22:07,350 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-25 13:22:07,351 | INFO |  test_game_states,60 
+ test_3ordering
+2021-01-25 13:22:07,351 | INFO |  test_game_states,74 
+ test_4successors_and_take
+2021-01-25 13:30:06,101 | INFO |  test_game_states,15 
+ test_1init
+2021-01-25 13:30:06,101 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-25 13:30:06,101 | INFO |  test_game_states,60 
+ test_3ordering
+2021-01-25 13:30:06,102 | INFO |  test_game_states,74 
+ test_4successors_and_take

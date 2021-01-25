@@ -39,7 +39,7 @@ and its tree contains only 1 node. You can investigate a certain game-state, e.g
 the tree with the corresponding root node. The winning flag of the root node will then tell you, whether
 you have a safe strategy to win, and if so, the tree will show you the path to victory.
 """
-from models.game_states import GameState, GameStateSuccessors
+from models.game_states import GameState
 
 
 class GameNode:
@@ -109,14 +109,21 @@ class GameTree:
         # init
         assert self.find(game_state) is None
         node = GameNode(game_state)
-        node.winning = 1  # See min(...) below
-        # generate all child nodes, update winning flag
-        for s_game_state in GameStateSuccessors(game_state):
+        # generate all child nodes, look for a winning == -1 flag
+        minus1_found = False
+        for s_game_state in game_state.normalized_successors():
             s_node = self.find(s_game_state)
-            if s_node is None:
-                s_node = self._generate_node(s_game_state)
+            if s_node is None:  # recursive guard
+                s_node = self._generate_node(s_game_state)  # recursive call
             node.children.append(s_node)
-            node.winning = min(node.winning, s_node.winning)
+            assert s_node.winning != 0
+            if s_node.winning == -1:
+                minus1_found = True
+        # set the winning flag
+        if minus1_found:
+            node.winning = 1
+        else:
+            node.winning = -1
         # insert this node
         n = game_state.get_total_count()
         self.layers[n].insert(node)

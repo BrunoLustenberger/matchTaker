@@ -3,6 +3,7 @@
 """
 
 import copy
+import functools
 
 from utils import permutation
 
@@ -16,6 +17,8 @@ class Error(Exception):
             raise cls(*args)
 
 
+@functools.total_ordering  # generates from == and < the other comparison operators
+# lexicographic ordering is used
 class GameState:
 
     def __init__(self, rows):
@@ -33,6 +36,18 @@ class GameState:
             Error.check(x <= k+1, f"row at index {k} must contain <= {k + 1} matches")
             self.rows.append(x)
         Error.check(sum(self.rows) > 0, 'rows must contain at least 1 match')
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.rows == other.rows
+        else:
+            return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, self.__class__):
+            return self.rows < other.rows
+        else:
+            return NotImplemented
 
     def get_rows(self):
         """ Returns a copy of the internal rows list
@@ -61,6 +76,36 @@ class GameState:
         """
         self.rows = p.inv().apply(self.rows)
 
+    def take(self, count: int, k: int):  # -> GameState:
+        """
+        Takes count matches off the row with index k and returns the new game state.
+        Assumption: 1 <= count <= number of matches at index k
+                    and count < total count of matches (handles the case, where all matches are in 1 row)
+        """
+        assert 0 <= k < 5
+        assert 1 <= count <= self.rows[k]
+        assert count < sum(self.rows)
+        new_rows = self.get_rows()
+        new_rows[k] -= count
+        return GameState(new_rows)
 
-class GameStateSuccessors:
-    pass
+    def normalized_successors(self) -> list:
+        """
+        Assumption: self is a normalized game state.
+        :return: list of all normalized game states that can be generated from self with 1 move.
+        Example: [0, 0, 1, 2, 2] will return [0, 0, 0, 2, 2], [0, 0, 1, 1, 2], [0, 0, 0, 1, 2]
+        """
+        assert self.is_normalized()
+        result = []
+        max_count = min(3, sum(self.rows)-1)
+        # later a list of lists may be used, therefore this double loop
+        for count in range(1, max_count+1):
+            temp = []
+            for k in range(5):
+                if count <= self.rows[k]:
+                    game_state = self.take(count, k)
+                    game_state.normalize()
+                    if game_state not in temp:
+                        temp.append(game_state)
+            result = result + temp
+        return result
