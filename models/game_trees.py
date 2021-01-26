@@ -118,6 +118,8 @@ class GameLayer:
 class GameTree:
 
     def __init__(self, game_state: GameState):
+        # for tests and logs only
+        self.node_count = 0
         # generate layers
         self.layers = []
         self.total_count = game_state.get_total_count()
@@ -125,6 +127,8 @@ class GameTree:
             self.layers.append(GameLayer(n))
         # generate root node -- and recursively all nodes
         self.root_node = self._generate_node(game_state)
+        # check node count
+        assert self.node_count == sum([len(layer.nodes) for layer in self.layers])
 
     def _generate_node(self, game_state: GameState) -> GameNode:
         """
@@ -155,6 +159,8 @@ class GameTree:
         # insert this node
         n = game_state.get_total_count()
         self.layers[n].insert(node)
+        # count nodes
+        self.node_count += 1
         # result
         return node
 

@@ -24,6 +24,7 @@ class TestGameTrees(unittest.TestCase):
         self.assertTrue(node2 == node3)
 
     def test_2GameLayer(self):
+        logger.info("test_2GameLayer")
         layer = GameLayer(5)
         self.assertEqual(layer.nodes, [])
         gs1 = GameState([0, 0, 0, 2, 3])  # gs1
@@ -62,6 +63,65 @@ class TestGameTrees(unittest.TestCase):
         node = layer.find(gs5)
         self.assertTrue(node == node5)
         self.assertTrue(layer.is_sorted_lt())  #
+
+    def test_3GameTree(self):
+        logger.info("test_3GameTree")
+        # the most simple game
+        gs = GameState([0, 0, 0, 0, 1])
+        tree = GameTree(gs)
+        self.assertEqual(tree.node_count, 1)
+        self.assertEqual(tree.root_node.winning, -1)
+        # some simple situations
+        gs = GameState([0, 0, 0, 1, 1])
+        tree = GameTree(gs)
+        self.assertEqual(tree.node_count, 2)
+        self.assertEqual(tree.root_node.winning, 1)
+        gs = GameState([0, 0, 1, 1, 1])
+        tree = GameTree(gs)
+        self.assertEqual(tree.node_count, 3)
+        self.assertEqual(tree.root_node.winning, -1)
+        gs = GameState([0, 0, 0, 0, 2])
+        tree = GameTree(gs)
+        self.assertEqual(tree.node_count, 2)
+        self.assertEqual(tree.root_node.winning, 1)
+        gs = GameState([0, 0, 0, 0, 5])
+        tree = GameTree(gs)
+        self.assertEqual(tree.node_count, 5)
+        self.assertEqual(tree.root_node.winning, -1)
+        gs = GameState([0, 0, 0, 2, 3])
+        tree = GameTree(gs)
+        self.assertEqual(len(tree.layers[4].nodes), 2)
+        self.assertEqual(len(tree.layers[3].nodes), 2)
+        self.assertEqual(len(tree.layers[2].nodes), 2)
+        self.assertEqual(tree.node_count, 8)
+        self.assertEqual(tree.root_node.winning, 1)
+        gs = GameState([0, 0, 0, 2, 2])
+        tree = GameTree(gs)
+        self.assertEqual(tree.root_node.winning, -1)
+        gs = GameState([0, 1, 1, 2, 2])
+        tree = GameTree(gs)
+        self.assertEqual(tree.root_node.winning, -1)
+        # the "start" situations with 2 to 5 rows
+        gs = GameState([0, 0, 0, 1, 2])
+        tree = GameTree(gs)
+        self.assertEqual(tree.node_count, 4)
+        self.assertEqual(tree.root_node.winning, 1)
+        gs = GameState([0, 0, 1, 2, 3])
+        tree = GameTree(gs)
+        self.assertEqual(len(tree.layers[5].nodes), 3)  # 00023,00113,00122
+        self.assertEqual(len(tree.layers[4].nodes), 3)  # 00013,00022,00112
+        self.assertEqual(len(tree.layers[3].nodes), 3)  # 00003,00012,00111
+        self.assertEqual(len(tree.layers[2].nodes), 2)  # 00002,00011
+        self.assertEqual(tree.node_count, 13)
+        self.assertEqual(tree.root_node.winning, -1)
+        gs = GameState([0, 1, 2, 3, 4])
+        tree = GameTree(gs)
+        logger.info(f"node count: {tree.node_count}")
+        logger.info(f"winning: {tree.root_node.winning}")
+        gs = GameState([1, 2, 3, 4, 5])
+        tree = GameTree(gs)
+        logger.info(f"node count: {tree.node_count}")
+        logger.info(f"winning: {tree.root_node.winning}")
 
 
 if __name__ == "__main__":
