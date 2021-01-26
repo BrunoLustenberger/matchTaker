@@ -39,9 +39,16 @@ and its tree contains only 1 node. You can investigate a certain game-state, e.g
 the tree with the corresponding root node. The winning flag of the root node will then tell you, whether
 you have a safe strategy to win, and if so, the tree will show you the path to victory.
 """
+
+import functools
+import bisect
 from models.game_states import GameState
 
 
+@functools.total_ordering  # generates from == and < the other comparison operators
+# GameState ordering is used
+# Note: two nodes are considered "equal", when their game_states are equal
+#       the winning flag or list of children may be different!
 class GameNode:
 
     def __init__(self, game_state: GameState):
@@ -50,11 +57,17 @@ class GameNode:
         self.winning = 0
         self.children = []
 
-    def generate_moves(self):
-        pass
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.game_state == other.game_state
+        else:
+            return NotImplemented
 
-    def set_winning_flag(self):
-        pass
+    def __lt__(self, other):
+        if isinstance(other, self.__class__):
+            return self.game_state < other.game_state
+        else:
+            return NotImplemented
 
     def select_move(self):
         pass
@@ -81,10 +94,25 @@ class GameLayer:
         self.nodes = []
 
     def insert(self, node: GameNode):
-        pass
+        assert node.game_state.get_total_count() == self.n
+        bisect.insort_left(self.nodes, node)
 
-    def find(self, game_state: GameState) -> GameNode:
-        pass
+    def find(self, game_state: GameState) -> GameNode or None:
+        test_node = GameNode(game_state)
+        i = bisect.bisect_left(self.nodes, test_node)
+        if i < len(self.nodes) and self.nodes[i] == test_node:
+            return self.nodes[i]
+        else:
+            return None
+
+    def is_sorted_lt(self) -> bool:
+        """
+        For tests only. Checks that item1 < item2 for any subsequent items.
+        :return: True iff all tests passed
+        """
+        for k in range(len(self.nodes) - 1):
+            assert self.nodes[k] < self.nodes[k+1]
+        return True
 
 
 class GameTree:

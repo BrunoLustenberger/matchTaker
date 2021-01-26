@@ -76,9 +76,11 @@ class TestGameState(unittest.TestCase):
         self.assertEqual(GameState([0, 0, 0, 3, 0]).take(2, 3), GameState([0, 0, 0, 1, 0]))
         self.assertEqual(GameState([1, 0, 0, 3, 0]).take(1, 0), GameState([0, 0, 0, 3, 0]))
         self.assertEqual(GameState([0, 0, 0, 0, 1]).normalized_successors(), [])
-        self.assertEqual(len(GameState([1, 2, 3, 4, 5]).normalized_successors()), 5+4+3)
+        self.assertEqual(sorted(GameState([0, 0, 0, 0, 3]).normalized_successors()),
+                         sorted([GameState([0, 0, 0, 0, 2]), GameState([0, 0, 0, 0, 1])]))
         self.assertEqual(sorted(GameState([0, 0, 1, 2, 2]).normalized_successors()),
                          sorted([GameState([0, 0, 0, 2, 2]), GameState([0, 0, 1, 1, 2]), GameState([0, 0, 0, 1, 2])]))
+        self.assertEqual(len(GameState([1, 2, 3, 4, 5]).normalized_successors()), 5+4+3)
         self.assertEqual(sorted(GameState([1, 2, 3, 4, 5]).normalized_successors()),
                          sorted([GameState([0, 2, 3, 4, 5]), GameState([1, 1, 3, 4, 5]), GameState([1, 2, 2, 4, 5]),
                                  GameState([1, 2, 3, 3, 5]), GameState([1, 2, 3, 4, 4]),
