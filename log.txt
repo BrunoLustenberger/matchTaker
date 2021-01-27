@@ -206,3 +206,173 @@
  node count: 131
 2021-01-26 17:18:17,650 | INFO |  test_game_trees,124 
  winning: 1
+2021-01-26 19:58:42,902 | INFO |  test_game_states,15 
+ test_1init
+2021-01-26 19:58:42,903 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-26 19:58:42,904 | INFO |  test_game_states,61 
+ test_3ordering
+2021-01-26 19:58:42,904 | INFO |  test_game_states,75 
+ test_4successors_and_take
+2021-01-26 19:59:21,684 | INFO |  test_game_states,15 
+ test_1init
+2021-01-26 19:59:21,684 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-26 19:59:21,684 | INFO |  test_game_states,61 
+ test_3ordering
+2021-01-26 19:59:21,684 | INFO |  test_game_states,75 
+ test_4successors_and_take
+2021-01-27 09:07:42,460 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-27 09:07:42,461 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0, node2:([12334]w-c:0, node3:([12334]w-c:0
+2021-01-27 09:07:42,461 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-27 09:07:42,461 | INFO |  test_game_trees,69 
+ test_3GameTree
+2021-01-27 09:07:42,491 | INFO |  test_game_trees,120 
+ node count: 41
+2021-01-27 09:07:42,491 | INFO |  test_game_trees,121 
+ winning: -1
+2021-01-27 09:07:42,554 | INFO |  test_game_trees,124 
+ node count: 131
+2021-01-27 09:07:42,554 | INFO |  test_game_trees,125 
+ winning: 1
+2021-01-27 09:08:50,203 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-27 09:08:50,204 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0), node2:([12334]w-c:0), node3:([12334]w-c:0)
+2021-01-27 09:08:50,204 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-27 09:08:50,204 | INFO |  test_game_trees,69 
+ test_3GameTree
+2021-01-27 09:08:50,230 | INFO |  test_game_trees,120 
+ node count: 41
+2021-01-27 09:08:50,230 | INFO |  test_game_trees,121 
+ winning: -1
+2021-01-27 09:08:50,297 | INFO |  test_game_trees,124 
+ node count: 131
+2021-01-27 09:08:50,297 | INFO |  test_game_trees,125 
+ winning: 1
+2021-01-27 09:12:03,569 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-27 09:12:03,569 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0), node2:([12334]w-c:0), node3:([12334]w-c:0)
+2021-01-27 09:12:03,569 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-27 09:12:03,569 | INFO |  test_game_trees,67 
+ layer:<models.game_trees.GameLayer object at 0x10a362910>
+2021-01-27 09:12:03,569 | INFO |  test_game_trees,70 
+ test_3GameTree
+2021-01-27 09:12:03,597 | INFO |  test_game_trees,121 
+ node count: 41
+2021-01-27 09:12:03,597 | INFO |  test_game_trees,122 
+ winning: -1
+2021-01-27 09:12:03,655 | INFO |  test_game_trees,125 
+ node count: 131
+2021-01-27 09:12:03,655 | INFO |  test_game_trees,126 
+ winning: 1
+2021-01-27 09:13:02,076 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-27 09:13:02,076 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0), node2:([12334]w-c:0), node3:([12334]w-c:0)
+2021-01-27 09:13:02,076 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-27 09:13:02,076 | INFO |  test_game_trees,67 
+ layer.nodes:[<models.game_trees.GameNode object at 0x10a58f6a0>, <models.game_trees.GameNode object at 0x10a58f970>, <models.game_trees.GameNode object at 0x10a58f730>, <models.game_trees.GameNode object at 0x10a58f7f0>, <models.game_trees.GameNode object at 0x10a58fa90>]
+2021-01-27 09:13:02,076 | INFO |  test_game_trees,70 
+ test_3GameTree
+2021-01-27 09:13:02,102 | INFO |  test_game_trees,121 
+ node count: 41
+2021-01-27 09:13:02,102 | INFO |  test_game_trees,122 
+ winning: -1
+2021-01-27 09:13:02,170 | INFO |  test_game_trees,125 
+ node count: 131
+2021-01-27 09:13:02,170 | INFO |  test_game_trees,126 
+ winning: 1
+2021-01-27 09:18:34,956 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-27 09:18:34,957 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0), node2:([12334]w-c:0), node3:([12334]w-c:0)
+2021-01-27 09:18:34,957 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-27 09:18:34,957 | INFO |  test_game_trees,67 
+ layer.nodes:[<models.game_trees.GameNode object at 0x10d2316a0>, <models.game_trees.GameNode object at 0x10d231970>, <models.game_trees.GameNode object at 0x10d231730>, <models.game_trees.GameNode object at 0x10d2317f0>, <models.game_trees.GameNode object at 0x10d231a90>]
+2021-01-27 09:18:34,957 | INFO |  test_game_trees,70 
+ test_3GameTree
+2021-01-27 09:18:34,965 | INFO |  test_game_trees,111 
+ ([00012]w+c:3)children: [1, 2, 3]
+2021-01-27 09:18:34,985 | INFO |  test_game_trees,122 
+ node count: 41
+2021-01-27 09:18:34,985 | INFO |  test_game_trees,123 
+ winning: -1
+2021-01-27 09:18:35,045 | INFO |  test_game_trees,126 
+ node count: 131
+2021-01-27 09:18:35,045 | INFO |  test_game_trees,127 
+ winning: 1
+2021-01-27 09:20:14,204 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-27 09:20:14,204 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0), node2:([12334]w-c:0), node3:([12334]w-c:0)
+2021-01-27 09:20:14,205 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-27 09:20:14,205 | INFO |  test_game_trees,67 
+ layer.nodes:[<models.game_trees.GameNode object at 0x10fe668b0>, <models.game_trees.GameNode object at 0x10fe66b80>, <models.game_trees.GameNode object at 0x10fe66940>, <models.game_trees.GameNode object at 0x10fe66a00>, <models.game_trees.GameNode object at 0x10fe66ca0>]
+2021-01-27 09:20:14,205 | INFO |  test_game_trees,70 
+ test_3GameTree
+2021-01-27 09:20:14,212 | INFO |  test_game_trees,111 
+ ([00012]w+c:3) children: ['([00002]w+c:1)', '([00011]w+c:1)', '([00001]w-c:0)']
+2021-01-27 09:20:14,230 | INFO |  test_game_trees,122 
+ node count: 41
+2021-01-27 09:20:14,230 | INFO |  test_game_trees,123 
+ winning: -1
+2021-01-27 09:20:14,288 | INFO |  test_game_trees,126 
+ node count: 131
+2021-01-27 09:20:14,288 | INFO |  test_game_trees,127 
+ winning: 1
+2021-01-27 10:14:07,208 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-27 10:14:07,208 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0), node2:([12334]w-c:0), node3:([12334]w-c:0)
+2021-01-27 10:14:07,208 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-27 10:14:07,208 | INFO |  test_game_trees,67 
+ layer.nodes:[<models.game_trees.GameNode object at 0x1100d78b0>, <models.game_trees.GameNode object at 0x1100d7b80>, <models.game_trees.GameNode object at 0x1100d7940>, <models.game_trees.GameNode object at 0x1100d7a00>, <models.game_trees.GameNode object at 0x1100d7ca0>]
+2021-01-27 10:14:07,208 | INFO |  test_game_trees,70 
+ test_3GameTree
+2021-01-27 10:14:07,215 | INFO |  test_game_trees,111 
+ tree root: ([00012]w+c:3) children: ['([00002]w+c:1)', '([00011]w+c:1)', '([00001]w-c:0)']
+2021-01-27 10:14:07,234 | INFO |  test_game_trees,122 
+ node count: 41
+2021-01-27 10:14:07,234 | INFO |  test_game_trees,123 
+ winning: -1
+2021-01-27 10:14:07,295 | INFO |  test_game_trees,126 
+ node count: 131
+2021-01-27 10:14:07,295 | INFO |  test_game_trees,127 
+ winning: 1
+2021-01-27 10:17:41,297 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-27 10:17:41,297 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0), node2:([12334]w-c:0), node3:([12334]w-c:0)
+2021-01-27 10:17:41,297 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-27 10:17:41,297 | INFO |  test_game_trees,67 
+ layer.nodes:[<models.game_trees.GameNode object at 0x108c31940>, <models.game_trees.GameNode object at 0x108c31c10>, <models.game_trees.GameNode object at 0x108c319d0>, <models.game_trees.GameNode object at 0x108c31a90>, <models.game_trees.GameNode object at 0x108c31d30>]
+2021-01-27 10:17:41,297 | INFO |  test_game_trees,70 
+ test_3GameTree
+2021-01-27 10:17:41,304 | INFO |  test_game_trees,109 
+ tree root: ([00012]w+c:3) children: ['([00002]w+c:1)', '([00011]w+c:1)', '([00001]w-c:0)']
+2021-01-27 10:17:41,307 | INFO |  test_game_trees,114 
+ tree root: ([00123]w-c:6) children: ['([00023]w+c:5)', '([00113]w+c:4)', '([00122]w+c:3)', '([00013]w+c:4)', '([00112]w+c:3)', '([00012]w+c:3)']
+2021-01-27 10:17:41,322 | INFO |  test_game_trees,123 
+ tree root: ([01234]w-c:9) children: ['([00234]w+c:8)', '([01134]w+c:7)', '([01224]w+c:6)', '([01233]w+c:6)', '([00134]w+c:7)', '([01124]w+c:6)', '([01223]w+c:6)', '([00124]w+c:6)', '([01123]w+c:6)']
+2021-01-27 10:17:41,322 | INFO |  test_game_trees,124 
+ node count: 41
+2021-01-27 10:17:41,322 | INFO |  test_game_trees,125 
+ winning: -1
+2021-01-27 10:17:41,375 | INFO |  test_game_trees,128 
+ tree root: ([12345]w+c:12) children: ['([02345]w-c:11)', '([11345]w+c:10)', '([12245]w-c:9)', '([12335]w+c:9)', '([12344]w-c:9)', '([01345]w+c:10)', '([11245]w+c:9)', '([12235]w+c:9)', '([12334]w+c:9)', '([01245]w+c:9)', '([11235]w-c:9)', '([12234]w+c:9)']
+2021-01-27 10:17:41,375 | INFO |  test_game_trees,129 
+ node count: 131
+2021-01-27 10:17:41,376 | INFO |  test_game_trees,130 
+ winning: 1

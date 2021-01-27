@@ -49,6 +49,7 @@ class TestGameState(unittest.TestCase):
         rows = [1, 0, 3, 2, 1]
         gs = GameState(rows)
         self.assertEqual(gs.get_rows(), rows)
+        self.assertEqual(str(gs),"[10321]")
         self.assertFalse(gs.is_normalized())
         p = gs.normalize()
         self.assertTrue(gs.is_normalized())

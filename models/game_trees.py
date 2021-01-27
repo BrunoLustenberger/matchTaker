@@ -69,6 +69,17 @@ class GameNode:
         else:
             return NotImplemented
 
+    def __str__(self):
+        s = f"({self.game_state}w"
+        if self.winning == -1:
+            s += "-"
+        elif self.winning == 1:
+            s += "+"
+        else:
+            s += "0"
+        s += f"c:{len(self.children)})"
+        return s
+
     def select_move(self):
         pass
 

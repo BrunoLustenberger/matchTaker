@@ -49,6 +49,13 @@ class GameState:
         else:
             return NotImplemented
 
+    def __str__(self):
+        s = f"[{self.rows[0]}"
+        for k in range(1, len(self.rows)):
+            s += f"{self.rows[k]}"
+        s += "]"
+        return s
+
     def get_rows(self):
         """ Returns a copy of the internal rows list
         """

@@ -22,6 +22,7 @@ class TestGameTrees(unittest.TestCase):
         node3.winning = -1
         self.assertTrue(node1 < node2)
         self.assertTrue(node2 == node3)
+        logger.info(f"node1:{str(node1)}, node2:{str(node2)}, node3:{str(node3)}")
 
     def test_2GameLayer(self):
         logger.info("test_2GameLayer")
@@ -62,7 +63,8 @@ class TestGameTrees(unittest.TestCase):
         layer.insert(node5)
         node = layer.find(gs5)
         self.assertTrue(node == node5)
-        self.assertTrue(layer.is_sorted_lt())  #
+        self.assertTrue(layer.is_sorted_lt())
+        logger.info("layer.nodes:"+str(layer.nodes))
 
     def test_3GameTree(self):
         logger.info("test_3GameTree")
@@ -104,10 +106,12 @@ class TestGameTrees(unittest.TestCase):
         # the "start" situations with 2 to 5 rows
         gs = GameState([0, 0, 0, 1, 2])
         tree = GameTree(gs)
+        logger.info("tree root: " + str(tree.root_node) + f" children: {[str(c) for c in tree.root_node.children]}")
         self.assertEqual(tree.node_count, 4)
         self.assertEqual(tree.root_node.winning, 1)
         gs = GameState([0, 0, 1, 2, 3])
         tree = GameTree(gs)
+        logger.info("tree root: " + str(tree.root_node) + f" children: {[str(c) for c in tree.root_node.children]}")
         self.assertEqual(len(tree.layers[5].nodes), 3)  # 00023,00113,00122
         self.assertEqual(len(tree.layers[4].nodes), 3)  # 00013,00022,00112
         self.assertEqual(len(tree.layers[3].nodes), 3)  # 00003,00012,00111
@@ -116,10 +120,12 @@ class TestGameTrees(unittest.TestCase):
         self.assertEqual(tree.root_node.winning, -1)
         gs = GameState([0, 1, 2, 3, 4])
         tree = GameTree(gs)
+        logger.info("tree root: " + str(tree.root_node) + f" children: {[str(c) for c in tree.root_node.children]}")
         logger.info(f"node count: {tree.node_count}")
         logger.info(f"winning: {tree.root_node.winning}")
         gs = GameState([1, 2, 3, 4, 5])
         tree = GameTree(gs)
+        logger.info("tree root: " + str(tree.root_node) + f" children: {[str(c) for c in tree.root_node.children]}")
         logger.info(f"node count: {tree.node_count}")
         logger.info(f"winning: {tree.root_node.winning}")
 
