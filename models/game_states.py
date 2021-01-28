@@ -85,10 +85,10 @@ class GameState:
         return sum(self.rows)
 
     def normalize(self):
-        """ Sorts the internal rows list and returns the permutation generating this sort order.
+        """ Sorts the internal rows list in ascending order and returns the permutation that undoes this sorting.
         """
         self.rows, p = permutation.Permutation.sorted(self.rows)
-        return p
+        return p.inv()
 
     def is_normalized(self):
         """ Returns True iff the internal rows list ist sorted in ascending order. """
@@ -98,9 +98,8 @@ class GameState:
     def denormalize(self, p):
         """ Resets the internal rows list to state before normalization.
             Param p: The permutation that was returned by the call to normalize()
-            todo: return the inverse, because this is what is being used
         """
-        self.rows = p.inv().apply(self.rows)
+        self.rows = p.apply(self.rows)
 
     def is_possible_move(self, move: GameMove) -> bool:
         """ Returns true iff:

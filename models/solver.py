@@ -57,7 +57,7 @@ def solve(game_state: GameState, level: int) -> (GameMove or None, int):
         match_count = min(3, sorted_rows[4])  # max number of matches
         if sorted_rows[3] == 0:  # special case: only this row has matches --> must not take all
             match_count = min(match_count, sorted_rows[4] - 1)
-        row_index = p.inv()(4)
+        row_index = p(4)
         return GameMove(row_index, match_count)
 
     def best_move() -> (GameMove, int):
@@ -65,7 +65,7 @@ def solve(game_state: GameState, level: int) -> (GameMove or None, int):
         p = game_state.normalize()
         node = current_tree().find(game_state)
         _game_move, _winning = node.select_move()
-        _game_move.row_index = p.inv()(_game_move.row_index)
+        _game_move.row_index = p(_game_move.row_index)
         return _game_move, _winning
 
     # main body continued

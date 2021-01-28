@@ -208,3 +208,41 @@
  winning: 1
 2021-01-28 11:51:53,727 | INFO |  test_game_trees,133 
  test_4select_move
+2021-01-28 12:32:15,716 | INFO |  test_game_states,15 
+ test_1init
+2021-01-28 12:32:15,717 | INFO |  test_game_states,48 
+ test_2normalize
+2021-01-28 12:32:15,718 | INFO |  test_game_states,61 
+ test_3ordering
+2021-01-28 12:32:15,718 | INFO |  test_game_states,75 
+ test_4successors_and_make_move
+2021-01-28 12:32:15,721 | INFO |  test_game_states,102 
+ test_5get_move
+2021-01-28 12:32:24,349 | INFO |  test_game_trees,16 
+ test_1GameNode
+2021-01-28 12:32:24,349 | INFO |  test_game_trees,25 
+ node1:([12244]w0c:0), node2:([12334]w-c:0), node3:([12334]w-c:0)
+2021-01-28 12:32:24,349 | INFO |  test_game_trees,28 
+ test_2GameLayer
+2021-01-28 12:32:24,349 | INFO |  test_game_trees,67 
+ layer.nodes:[<models.game_trees.GameNode object at 0x10e51b040>, <models.game_trees.GameNode object at 0x10e51b0a0>, <models.game_trees.GameNode object at 0x10e508dc0>, <models.game_trees.GameNode object at 0x10e508e80>, <models.game_trees.GameNode object at 0x10e51b160>]
+2021-01-28 12:32:24,349 | INFO |  test_game_trees,70 
+ test_3GameTree
+2021-01-28 12:32:24,356 | INFO |  test_game_trees,109 
+ tree root: ([00012]w+c:3) children: ['([00002]w+c:1)', '([00011]w+c:1)', '([00001]w-c:0)']
+2021-01-28 12:32:24,359 | INFO |  test_game_trees,114 
+ tree root: ([00123]w-c:6) children: ['([00023]w+c:5)', '([00113]w+c:4)', '([00122]w+c:3)', '([00013]w+c:4)', '([00112]w+c:3)', '([00012]w+c:3)']
+2021-01-28 12:32:24,375 | INFO |  test_game_trees,123 
+ tree root: ([01234]w-c:9) children: ['([00234]w+c:8)', '([01134]w+c:7)', '([01224]w+c:6)', '([01233]w+c:6)', '([00134]w+c:7)', '([01124]w+c:6)', '([01223]w+c:6)', '([00124]w+c:6)', '([01123]w+c:6)']
+2021-01-28 12:32:24,375 | INFO |  test_game_trees,124 
+ node count: 41
+2021-01-28 12:32:24,375 | INFO |  test_game_trees,125 
+ winning: -1
+2021-01-28 12:32:24,448 | INFO |  test_game_trees,128 
+ tree root: ([12345]w+c:12) children: ['([02345]w-c:11)', '([11345]w+c:10)', '([12245]w-c:9)', '([12335]w+c:9)', '([12344]w-c:9)', '([01345]w+c:10)', '([11245]w+c:9)', '([12235]w+c:9)', '([12334]w+c:9)', '([01245]w+c:9)', '([11235]w-c:9)', '([12234]w+c:9)']
+2021-01-28 12:32:24,448 | INFO |  test_game_trees,129 
+ node count: 131
+2021-01-28 12:32:24,448 | INFO |  test_game_trees,130 
+ winning: 1
+2021-01-28 12:32:24,448 | INFO |  test_game_trees,133 
+ test_4select_move
