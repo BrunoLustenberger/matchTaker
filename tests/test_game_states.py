@@ -2,7 +2,7 @@ import unittest
 import logging
 
 from utils import mylogconfig
-from models.game_states import *
+from models.game_states import GameMove, GameState, Error
 
 mylogconfig.standard_rot(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ class TestGameState(unittest.TestCase):
         rows = [1, 0, 3, 2, 1]
         gs = GameState(rows)
         self.assertEqual(gs.get_rows(), rows)
-        self.assertEqual(str(gs),"[10321]")
+        self.assertEqual(str(gs), "[10321]")
         self.assertFalse(gs.is_normalized())
         p = gs.normalize()
         self.assertTrue(gs.is_normalized())
@@ -71,11 +71,19 @@ class TestGameState(unittest.TestCase):
         self.assertTrue(gs_min < gs4 < gs3 < gs_max)
         self.assertTrue(gs_min <= gs4 <= gs3 <= gs_max)
 
-    def test_4successors_and_take(self):
-        logger.info("test_4successors_and_take")
-        self.assertEqual(GameState([1, 2, 3, 4, 5]).take(2, 1), GameState([1, 0, 3, 4, 5]))
-        self.assertEqual(GameState([0, 0, 0, 3, 0]).take(2, 3), GameState([0, 0, 0, 1, 0]))
-        self.assertEqual(GameState([1, 0, 0, 3, 0]).take(1, 0), GameState([0, 0, 0, 3, 0]))
+    def test_4successors_and_make_move(self):
+        logger.info("test_4successors_and_make_move")
+        # possible move
+        self.assertTrue(GameState([1, 0, 0, 3, 0]).is_possible_move(GameMove(3, 3)))
+        self.assertTrue(GameState([1, 0, 0, 3, 0]).is_possible_move(GameMove(0, 1)))
+        self.assertFalse(GameState([1, 0, 0, 3, 0]).is_possible_move(GameMove(0, 2)))
+        self.assertFalse(GameState([1, 0, 0, 3, 0]).is_possible_move(GameMove(1, 1)))
+        self.assertFalse(GameState([0, 0, 0, 3, 0]).is_possible_move(GameMove(3, 3)))
+        # make move
+        self.assertEqual(GameState([1, 2, 3, 4, 5]).make_move(GameMove(1, 2)), GameState([1, 0, 3, 4, 5]))
+        self.assertEqual(GameState([0, 0, 0, 3, 0]).make_move(GameMove(3, 2)), GameState([0, 0, 0, 1, 0]))
+        self.assertEqual(GameState([1, 0, 0, 3, 0]).make_move(GameMove(0, 1)), GameState([0, 0, 0, 3, 0]))
+        # normalized successors
         self.assertEqual(GameState([0, 0, 0, 0, 1]).normalized_successors(), [])
         self.assertEqual(sorted(GameState([0, 0, 0, 0, 3]).normalized_successors()),
                          sorted([GameState([0, 0, 0, 0, 2]), GameState([0, 0, 0, 0, 1])]))
@@ -89,6 +97,22 @@ class TestGameState(unittest.TestCase):
                                  GameState([1, 2, 3, 3, 4]),
                                  GameState([0, 1, 2, 4, 5]), GameState([1, 1, 2, 3, 5]), GameState([1, 2, 2, 3, 4])
                                  ]))
+
+    def test_5get_move(self):
+        logger.info("test_5get_move")
+        gs1 = GameState([1, 2, 3, 4, 5])
+        gs2 = GameState([1, 2, 2, 3, 5])
+        self.assertEqual(gs1.get_move(gs2), GameMove(3, 2))
+        gs1 = GameState([0, 0, 1, 1, 1])
+        gs2 = GameState([0, 0, 0, 1, 1])
+        gm = gs1.get_move(gs2)
+        self.assertTrue(gm.match_count == 1 and gm.row_index in range(2, 5))
+        gs1 = GameState([1, 2, 3, 4, 5])
+        gs2 = GameState([0, 2, 3, 4, 5])
+        self.assertEqual(gs1.get_move(gs2), GameMove(0, 1))
+        gs1 = GameState([1, 2, 3, 4, 5])
+        gs2 = GameState([1, 2, 2, 3, 4])
+        self.assertEqual(gs1.get_move(gs2), GameMove(4, 3))
 
 
 if __name__ == "__main__":

@@ -129,6 +129,42 @@ class TestGameTrees(unittest.TestCase):
         logger.info(f"node count: {tree.node_count}")
         logger.info(f"winning: {tree.root_node.winning}")
 
+    def test_4select_move(self):
+        logger.info("test_4select_move")
+        # 00123
+        gs = GameState([0, 0, 1, 2, 3])
+        tree = GameTree(gs)
+        self.assertEqual(tree.root_node.winning, -1)
+        # 1st  move
+        game_move, winning = tree.root_node.select_move()
+        self.assertEqual(winning, 1)
+        new_game_state = tree.root_node.game_state.make_move(game_move)
+        new_node = tree.find(new_game_state)
+        self.assertEqual(new_node.winning, 1)
+        self.assertEqual(new_node.game_state.get_total_count(), tree.root_node.game_state.get_total_count() - 1)
+        # 2nd move
+        game_move, winning = new_node.select_move()
+        self.assertEqual(winning, -1)
+        new_game_state = new_node.game_state.make_move(game_move)
+        new_node = tree.find(new_game_state)
+        self.assertEqual(new_node.winning, -1)
+        # 12345
+        gs = GameState([1, 2, 3, 4, 5])
+        tree = GameTree(gs)
+        self.assertEqual(tree.root_node.winning, 1)  # see logs above
+        # 1st  move
+        game_move, winning = tree.root_node.select_move()
+        self.assertEqual(winning, -1)
+        new_game_state = tree.root_node.game_state.make_move(game_move)
+        new_node = tree.find(new_game_state)
+        self.assertEqual(new_node.winning, -1)
+        # 2nd move
+        game_move, winning = new_node.select_move()
+        self.assertEqual(winning, 1)
+        new_game_state = new_node.game_state.make_move(game_move)
+        new_node = tree.find(new_game_state)
+        self.assertEqual(new_node.winning, 1)
+
 
 if __name__ == "__main__":
     unittest.main()

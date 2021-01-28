@@ -17,6 +17,24 @@ class Error(Exception):
             raise cls(*args)
 
 
+class GameMove:
+    """ A move in the game consists in selecting a row and taking off some matches.
+    At least 1 match and at most 3 matches must be taken.
+    """
+
+    def __init__(self, row_index: int, match_count: int):
+        assert row_index in range(5)
+        assert match_count in range(1, 3+1)
+        self.row_index = row_index
+        self.match_count = match_count
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.row_index == other.row_index and self.match_count == other.match_count
+        else:
+            return NotImplemented
+
+
 @functools.total_ordering  # generates from == and < the other comparison operators
 # lexicographic ordering is used
 class GameState:
@@ -80,20 +98,24 @@ class GameState:
     def denormalize(self, p):
         """ Resets the internal rows list to state before normalization.
             Param p: The permutation that was returned by the call to normalize()
+            todo: return the inverse, because this is what is being used
         """
         self.rows = p.inv().apply(self.rows)
 
-    def take(self, count: int, k: int):  # -> GameState:
+    def is_possible_move(self, move: GameMove) -> bool:
+        """ Returns true iff:
+        move.match_count <= number of matches at row_index
+        and move.match_count < total count of matches (handles the case, where all matches are in 1 row)
         """
-        Takes count matches off the row with index k and returns the new game state.
-        Assumption: 1 <= count <= number of matches at index k
-                    and count < total count of matches (handles the case, where all matches are in 1 row)
+        return (move.match_count <= self.rows[move.row_index]) and (move.match_count < sum(self.rows))
+
+    def make_move(self, move: GameMove):  # -> GameState:
+        """ Takes count matches off the row with index k and returns the new game state.
+        Assumption: the move is possible.
         """
-        assert 0 <= k < 5
-        assert 1 <= count <= self.rows[k]
-        assert count < sum(self.rows)
+        assert self.is_possible_move(move)
         new_rows = self.get_rows()
-        new_rows[k] -= count
+        new_rows[move.row_index] -= move.match_count
         return GameState(new_rows)
 
     def normalized_successors(self) -> list:
@@ -110,9 +132,36 @@ class GameState:
             temp = []
             for k in range(5):
                 if count <= self.rows[k]:
-                    game_state = self.take(count, k)
+                    game_state = self.make_move(GameMove(k, count))
                     game_state.normalize()
                     if game_state not in temp:
                         temp.append(game_state)
             result = result + temp
         return result
+
+    # def get_move(self, game_state: GameState) -> (int, int):
+    # todo: annotations
+    def get_move(self, game_state) -> GameMove:
+        """ Returns a move which turns self into a game state, whose normalization is equal to game_state.
+        Example: get_move(12345,12235) == (3,2) because 12345 --> 12325 --> 12235
+        Assumption: (1) self and game_state are normalized
+                    (2) game_state is a successor of self
+        :param game_state: the game_state to generate with the move and following normalization
+        :return: the move
+        """
+        assert self.is_normalized()
+        assert game_state.is_normalized()
+        assert game_state in self.normalized_successors()
+        # match_count: the difference of the total counts of matches
+        match_count = self.get_total_count() - game_state.get_total_count()
+        # row_index: the first from right that has changed
+        candidates = [k for k in range(5) if self.rows[k] != game_state.rows[k]]
+        assert len(candidates) > 0
+        row_index = candidates[-1]
+        # check todo: unit-test
+        move = GameMove(row_index, match_count)
+        temp_state = self.make_move(move)
+        temp_state.normalize()
+        assert temp_state == game_state
+        # return result
+        return move

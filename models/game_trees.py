@@ -42,7 +42,12 @@ you have a safe strategy to win, and if so, the tree will show you the path to v
 
 import functools
 import bisect
-from models.game_states import GameState
+import random
+
+from models.game_states import GameState, GameMove
+
+rand = random.Random()
+rand.seed(a=1)  # a=1 for reproducibility
 
 
 @functools.total_ordering  # generates from == and < the other comparison operators
@@ -80,22 +85,29 @@ class GameNode:
         s += f"c:{len(self.children)})"
         return s
 
-    def select_move(self):
-        pass
-
-
-class GameMove:
-
-    # todo: should not be necessary
-    """ row_index: the first from right that has changed.
-        match-count: e.g. the difference of the sums
-    12345
-    11235
-    """
-    def __init__(self):
-        self.row_index = -1
-        self.match_count = 0
-        self.next_node = None
+    def select_move(self) -> (GameMove, int):
+        """ Selects a move leading from self to a new node.
+        The value of the winning flag of the new node ist returned, too.
+        :return: 0: selected game move
+                 1: winning flag of new node
+        Assumption: self.winning has been computed already, i.e. != 0
+        Note:
+            If self.winning == 1, one of the child-nodes with winning == -1 is chosen randomly.
+            If self.winning ==-1, one of the child-nodes with winning == 1 and only 1 match less
+                                  is chosen randomly
+        """
+        assert self.winning in [-1, 1]
+        if self.winning == 1:
+            assert any([child.winning == -1 for child in self.children])
+            candidates = [child for child in self.children if child.winning == -1]
+        else:
+            assert all([child.winning == 1 for child in self.children])
+            total_count = self.game_state.get_total_count()
+            candidates = [child for child in self.children if child.game_state.get_total_count() == total_count - 1]
+        assert len(candidates) > 0
+        node = rand.choice(candidates)
+        game_move = self.game_state.get_move(node.game_state)
+        return game_move, node.winning
 
 
 class GameLayer:
@@ -138,8 +150,9 @@ class GameTree:
             self.layers.append(GameLayer(n))
         # generate root node -- and recursively all nodes
         self.root_node = self._generate_node(game_state)
-        # check node count
+        # checks
         assert self.node_count == sum([len(layer.nodes) for layer in self.layers])
+        assert all([layer.is_sorted_lt() for layer in self.layers])
 
     def _generate_node(self, game_state: GameState) -> GameNode:
         """
@@ -182,5 +195,14 @@ class GameTree:
         return node
 
 
+_current_tree: GameTree
+
+
+def set_current_tree(game_state: GameState):
+    # todo: log warning
+    global _current_tree
+    _current_tree = GameTree(game_state)
+
+
 def current_tree() -> GameTree:
-    pass
+    return _current_tree
