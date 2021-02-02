@@ -1,4 +1,6 @@
-"""
+"""Module defining game-state and its operations.
+
+
 
 """
 

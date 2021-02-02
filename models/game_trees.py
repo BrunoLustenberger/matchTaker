@@ -199,6 +199,9 @@ _current_tree: GameTree
 
 
 def set_current_tree(game_state: GameState):
+    """ Should only be called once by the main program.
+    However, unit-tests may call this, too.
+    """
     # todo: log warning
     global _current_tree
     _current_tree = GameTree(game_state)

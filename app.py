@@ -1,8 +1,13 @@
-""" Main module of mathTaker app
-    Version 0.0.1 *
+"""Main module of matchTaker app.
 
-    todo: distinguish row index (starts at 0) and row number (starts at 1)
+Version 0.0.1 *
+The following URLs are served:
+
+"/" : just a message hinting to API
+"/next_move" : to compute a next move in the game
 """
+# todo: distinguish row index (starts at 0) and row number (starts at 1)
+
 
 import json
 
@@ -17,6 +22,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
+    """Main page, currently empty."""
     return 'Hello from MatchTaker. Currently only API!'
 
 
@@ -24,7 +30,11 @@ def hello_world():
 @app.route('/next_move/<rows_state>', defaults={'level': 0})
 @app.route('/next_move/<rows_state>/<int:level>')
 def next_move(rows_state, level):
-    """
+    """Compute the next move from a given state.
+
+    Method: GET
+
+    Request:
     /next_move [/<rows_state> [/<level>] ]
     Examples:
         /next_move
@@ -32,7 +42,12 @@ def next_move(rows_state, level):
         /next_move/10340/2
     <rows_state> is a sequence of digits of 0..5. Digit at index k must be <= k+1 (where first index is k=0)
     <level> is integer in 0..2
+
+    Response:
+    Will be changed, see todo
+
     """
+    # todo: return only game-move and game-continue in response, no text
     result = {}
     try:
         # check and convert input
