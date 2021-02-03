@@ -1,4 +1,5 @@
-"""
+"""Module with classes for building and using the game-tree.
+
 Using a game tree, a safe strategy can be computed:
     Each node in the tree represents a possible state of the game and carries a winning flag.
     winning == 1 means: the player starting with this state has a safe strategy to win.
@@ -37,7 +38,7 @@ The module allows the generation of different trees, depending on what is chosen
 The standard game has the root with the state [1,2,3,4,5]. The most trivial game hast the root [0,0,0,0,1]
 and its tree contains only 1 node. You can investigate a certain game-state, e.g. [0,1,1,2,2], by generating
 the tree with the corresponding root node. The winning flag of the root node will then tell you, whether
-you have a safe strategy to win, and if so, the tree will show you the path to victory.
+you have a safe strategy to win, and if so, the tree will show you the path to "victory".
 """
 
 import functools
@@ -50,11 +51,26 @@ rand = random.Random()
 rand.seed(a=1)  # a=1 for reproducibility
 
 
-@functools.total_ordering  # generates from == and < the other comparison operators
-# GameState ordering is used
-# Note: two nodes are considered "equal", when their game_states are equal
-#       the winning flag or list of children may be different!
+@functools.total_ordering  # uses == and < to generate the other comparison operators
 class GameNode:
+    """Models a game-node.
+
+    Attributes:
+        game_state: GameState
+            Each node has a game-state, only normalized game-states are allowed.
+        winning: bool
+            The flag indicating whether there is a safe strategy for this node.
+            Initialized to unknown.
+        children: list of GameNode
+            List of all game-nodes that can be reached from this node with 1 move and subsequent normalization.
+            Initialized to empty.
+
+    Note:
+        (1) Two nodes are considered "equal", when their game_states are equal, the winning flag or
+            list of children may be different!
+        (2) Nodes have the same ordering as their game_state.
+        (3) When the construction of a game-tree is finished, all its nodes have different game_states.
+    """
 
     def __init__(self, game_state: GameState):
         assert game_state.is_normalized()
@@ -86,15 +102,15 @@ class GameNode:
         return s
 
     def select_move(self) -> (GameMove, int):
-        """ Selects a move leading from self to a new node.
-        The value of the winning flag of the new node ist returned, too.
+        """ Select a move leading from self to a new node.
+
         :return: 0: selected game move
-                 1: winning flag of new node
+                 1: winning flag of new node.
         Assumption: self.winning has been computed already, i.e. != 0
         Note:
-            If self.winning == 1, one of the child-nodes with winning == -1 is chosen randomly.
-            If self.winning ==-1, one of the child-nodes with winning == 1 and only 1 match less
-                                  is chosen randomly
+            (1) If self.winning == 1, one of the child-nodes with winning == -1 is chosen randomly.
+            (2) If self.winning ==-1, one of the child-nodes with winning == 1 and only 1 match less
+                                      is chosen randomly.
         """
         assert self.winning in [-1, 1]
         if self.winning == 1:
@@ -111,16 +127,27 @@ class GameNode:
 
 
 class GameLayer:
+    """Models a layer of game-nodes.
+
+    Attributes:
+        n: int
+            Total count of matches for each node in this layer.
+        nodes: list of GameNode
+            All normalized nodes with total match count == n.
+            The list is sorted in ascending order.
+    """
 
     def __init__(self, n: int):
         self.n = n
         self.nodes = []
 
     def insert(self, node: GameNode):
+        """Insert node in this layer, keeping up the ordering."""
         assert node.game_state.get_total_count() == self.n
         bisect.insort_left(self.nodes, node)
 
     def find(self, game_state: GameState) -> GameNode or None:
+        """Return the node containing game_state, None if not found."""
         test_node = GameNode(game_state)
         i = bisect.bisect_left(self.nodes, test_node)
         if i < len(self.nodes) and self.nodes[i] == test_node:
@@ -129,9 +156,8 @@ class GameLayer:
             return None
 
     def is_sorted_lt(self) -> bool:
-        """
-        For tests only. Checks that item1 < item2 for any subsequent items.
-        :return: True iff all tests passed
+        """For tests only. Check that the list is sorted in strictly increasing order.
+        More precisely: check that item1 < item2 for any subsequent items.
         """
         for k in range(len(self.nodes) - 1):
             assert self.nodes[k] < self.nodes[k+1]
@@ -139,8 +165,26 @@ class GameLayer:
 
 
 class GameTree:
+    """Models a game-tree.
+
+    Attributes:
+        root_node: GameNode
+            The root of the tree.
+        total_count:
+            Total count of matches of the game_state of the root node.
+        node_count: int
+            Total number of nodes in the tree. Currently only used for tests and logs.
+        layers: list of GameNode
+            The layers of the tree.
+
+    Example:
+        GameTree(GameState([0,0,0,2,2]) gives the entire tree for a starting game-state, that contains
+        only 2 rows with 2 matches each.
+        GameTree(GameState([1,2,3,4,5]) gives the entire tree of the standard game.
+    """
 
     def __init__(self, game_state: GameState):
+        """Create the tree whose root-node contains game_state. """
         # for tests and logs only
         self.node_count = 0
         # generate layers
@@ -155,8 +199,7 @@ class GameTree:
         assert all([layer.is_sorted_lt() for layer in self.layers])
 
     def _generate_node(self, game_state: GameState) -> GameNode:
-        """
-        Generates the node with game_state and also its entire subtree. The node is also inserted into the
+        """Generate the node with game_state and also its entire subtree. The node is also inserted into the
         corresponding layer.
         Assumption: a node with game_state does not yet exist in the tree (to avoid empty recursive calls)
         :param game_state: a valid game state, that is a descendant of the root game state
@@ -188,7 +231,8 @@ class GameTree:
         # result
         return node
 
-    def find(self, game_state: GameState) -> GameNode:
+    def find(self, game_state: GameState) -> GameNode or None:
+        """Return the the tree-node containing game_state, None if not found."""
         n = game_state.get_total_count()
         assert n <= self.total_count
         node = self.layers[n].find(game_state)
@@ -196,10 +240,13 @@ class GameTree:
 
 
 _current_tree: GameTree
+"""See set_current_tree."""
+# todo: init to None
 
 
 def set_current_tree(game_state: GameState):
-    """ Should only be called once by the main program.
+    """Set the current tree. This will be the tree used by normal runs of the app.
+    This function should only be called once by the main program during startup.
     However, unit-tests may call this, too.
     """
     # todo: log warning
@@ -208,4 +255,5 @@ def set_current_tree(game_state: GameState):
 
 
 def current_tree() -> GameTree:
+    """Return the current tree."""
     return _current_tree
