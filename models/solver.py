@@ -1,5 +1,4 @@
-"""
-
+"""Module providing a function for computing game-moves.
 
 """
 import random
@@ -21,19 +20,19 @@ class Error(Exception):
 
 
 def solve(game_state: GameState, level: int) -> (GameMove or None, int):
-    """
-    Computes the next move.
+    """Compute the next move.
     :param game_state: a valid game_state
-    :param level: the smartness level
-    :return: result[0] the game move
+    :param level: the smartness level, must be in 0..2.
+    :return: result[0] the game-move
              result[1] game continues, int in [-1, 0, 1, 2, 3]
-                       -1 : "You won". Occurs when input game_state contained exactly 1 match.
-                            In this case, result[0] == None.
-                        0 : "I won". Occurs when game_state after making the move result[0]
+                       -1 : "You won". Occurs when input game_state contains exactly 1 match.
+                            In this case, result[0] == None. In all other cases result[0] != None.
+                        0 : "I won". Occurs when game_state after making the move specified by result[0]
                             contains exactly 1 match.
                         1 : game continues -- no further information
-                        2 : game continues -- you have a safe strategy to win
-                        3 : game continues -- your opponent has a safe strategy to win
+                        2 : game continues -- you have a safe strategy to win.
+                        3 : game continues -- your opponent (i.e. I) has a safe strategy to win
+    :raise: Error, if level invalid.
     """
     Error.check(0 <= level <= 2, "level must be an integer in 0..2")
     rows = game_state.get_rows()
@@ -41,7 +40,7 @@ def solve(game_state: GameState, level: int) -> (GameMove or None, int):
     # sub functions
 
     def random_move() -> GameMove:
-        """ Chooses randomly one of the possible moves."""
+        """Choose randomly one of the possible moves."""
         non_zeros = [k for k in range(5) if rows[k] > 0]  # all indices with value > 0
         row_index = rand.choice(non_zeros)  # choose such index
         max_n = min(3, rows[row_index])  # max number of matches to be taken at this index
@@ -51,7 +50,7 @@ def solve(game_state: GameState, level: int) -> (GameMove or None, int):
         return GameMove(row_index, match_count)
 
     def most_first() -> GameMove:
-        """ Chooses the row with the most matches and takes as many matches as possible."""
+        """Choose a row with the most matches and take as many matches as possible."""
         p = game_state.normalize()
         sorted_rows = game_state.get_rows()
         match_count = min(3, sorted_rows[4])  # max number of matches
@@ -61,12 +60,17 @@ def solve(game_state: GameState, level: int) -> (GameMove or None, int):
         return GameMove(row_index, match_count)
 
     def best_move() -> (GameMove, int):
-        """ Chooses best possible move, if several exist, choose one randomly."""
+        """Choose best possible move, if several exist, choose one randomly.
+        Return also the winning flag of the resulting node.
+        """
         p = game_state.normalize()
         node = current_tree().find(game_state)
         _game_move, _winning = node.select_move()
         _game_move.row_index = p(_game_move.row_index)
         return _game_move, _winning
+
+    # todo: new intermediate level between 1 and 2: start randomly, switch to best when more than half of
+    # the matches have been taken.
 
     # main body continued
 

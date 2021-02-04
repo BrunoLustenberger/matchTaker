@@ -41,6 +41,9 @@ the tree with the corresponding root node. The winning flag of the root node wil
 you have a safe strategy to win, and if so, the tree will show you the path to "victory".
 """
 
+from __future__ import annotations  # for type annotations with forward references
+from typing import List, Tuple  # for type annotations
+
 import functools
 import bisect
 import random
@@ -58,10 +61,10 @@ class GameNode:
     Attributes:
         game_state: GameState
             Each node has a game-state, only normalized game-states are allowed.
-        winning: bool
+        winning: int
             The flag indicating whether there is a safe strategy for this node.
             Initialized to unknown.
-        children: list of GameNode
+        children: List[GameNode]
             List of all game-nodes that can be reached from this node with 1 move and subsequent normalization.
             Initialized to empty.
 
@@ -74,9 +77,9 @@ class GameNode:
 
     def __init__(self, game_state: GameState):
         assert game_state.is_normalized()
-        self.game_state = game_state
-        self.winning = 0
-        self.children = []
+        self.game_state: GameState = game_state
+        self.winning: int = 0
+        self.children: List[GameNode] = []
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -101,7 +104,7 @@ class GameNode:
         s += f"c:{len(self.children)})"
         return s
 
-    def select_move(self) -> (GameMove, int):
+    def select_move(self) -> Tuple[GameMove, int]:
         """ Select a move leading from self to a new node.
 
         :return: 0: selected game move
@@ -132,16 +135,16 @@ class GameLayer:
     Attributes:
         n: int
             Total count of matches for each node in this layer.
-        nodes: list of GameNode
+        nodes: List[GameNode]
             All normalized nodes with total match count == n.
             The list is sorted in ascending order.
     """
 
     def __init__(self, n: int):
-        self.n = n
-        self.nodes = []
+        self.n: int = n
+        self.nodes: List[GameNode] = []
 
-    def insert(self, node: GameNode):
+    def insert(self, node: GameNode) -> None:
         """Insert node in this layer, keeping up the ordering."""
         assert node.game_state.get_total_count() == self.n
         bisect.insort_left(self.nodes, node)
@@ -170,11 +173,11 @@ class GameTree:
     Attributes:
         root_node: GameNode
             The root of the tree.
-        total_count:
+        total_count: int
             Total count of matches of the game_state of the root node.
         node_count: int
             Total number of nodes in the tree. Currently only used for tests and logs.
-        layers: list of GameNode
+        layers: List[GameLayer]
             The layers of the tree.
 
     Example:
@@ -186,14 +189,14 @@ class GameTree:
     def __init__(self, game_state: GameState):
         """Create the tree whose root-node contains game_state. """
         # for tests and logs only
-        self.node_count = 0
+        self.node_count: int = 0
         # generate layers
-        self.layers = []
-        self.total_count = game_state.get_total_count()
+        self.layers: List[GameLayer] = []
+        self.total_count: int = game_state.get_total_count()
         for n in range(self.total_count+1):
             self.layers.append(GameLayer(n))
         # generate root node -- and recursively all nodes
-        self.root_node = self._generate_node(game_state)
+        self.root_node: GameNode = self._generate_node(game_state)
         # checks
         assert self.node_count == sum([len(layer.nodes) for layer in self.layers])
         assert all([layer.is_sorted_lt() for layer in self.layers])
@@ -240,7 +243,7 @@ class GameTree:
 
 
 _current_tree: GameTree
-"""See set_current_tree."""
+# See set_current_tree.
 # todo: init to None
 
 

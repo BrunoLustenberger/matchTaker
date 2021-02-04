@@ -20,6 +20,7 @@ class TestGameState(unittest.TestCase):
             pass
         try:
             GameState(list('123'))
+            # GameState(['2', '3'])
             self.assertTrue(False)
         except Error:
             pass
