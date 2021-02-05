@@ -18,7 +18,7 @@ from typing import List  # for type annotations
 import copy
 import functools
 
-from utils import permutation
+from utils import permutations
 
 
 class Error(Exception):
@@ -111,9 +111,9 @@ class GameState:
         """Return total count of all matches."""
         return sum(self.rows)
 
-    def normalize(self) -> permutation.Permutation:
+    def normalize(self) -> permutations.Permutation:
         """Sort the internal row list in ascending order and return the permutation that undoes this sorting."""
-        self.rows, p = permutation.Permutation.sorted(self.rows)
+        self.rows, p = permutations.Permutation.sorted(self.rows)
         return p.inv()
 
     def is_normalized(self) -> bool:
@@ -121,7 +121,7 @@ class GameState:
         test_list = [self.rows[k] <= self.rows[k+1] for k in range(4)]
         return all(test_list)
 
-    def denormalize(self, p: permutation.Permutation) -> None:
+    def denormalize(self, p: permutations.Permutation) -> None:
         """Reset the internal rows list to the state before normalization.
         :param p: The permutation that was returned by the call to normalize()
         """
