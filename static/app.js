@@ -23,7 +23,22 @@ function loadEventListeners() {
 // event listeners
 function init(e) {
   console.log(e)
-  console.log(ui_rows);
+  // actions
+  rows = [1,2,3,4,5];
+  rows_previous = [];
+  for (let i = 0; i < 5; i++) {
+    let s = 'I';
+    for (let k = 1; k <= i; k++) {
+      s = s + ' I';
+    }
+    ui_rows[i].firstElementChild.innerHTML = s;
+  }
+  ui_OK.innerText = 'Start';
+  ui_OK.disabled = false;
+  ui_Cancel.disabled = true;
+  ui_Quit.disabled = true;
+  // new state
+  gameState = gameBegin;
 }
 
 function matches(e) {
@@ -60,5 +75,9 @@ function quit(e) {
 // model
 // -----
 
-const rows = [1,2,3,4,5];
+let rows = [1,2,3,4,5];
 let rows_previous = [];
+
+// game states
+const gameBegin = 0, userSelecting = 1, compiSelecting = 2, gameGoing = 3, gameOver = 4;
+let gameState;
