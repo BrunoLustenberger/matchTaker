@@ -84,9 +84,12 @@ function setButtons() {
 // load all event listeners
 loadEventListeners();
 
+const simulatedResponseEvent = new Event('simulatedResponse');
+
 function loadEventListeners() {
   document.addEventListener('DOMContentLoaded', init);
-  ui_matches.addEventListener('click', matches)
+  document.addEventListener('simulatedResponse', response, true);
+  ui_matches.addEventListener('click', matches);
   ui_OK.addEventListener('click', ok);
   ui_Cancel.addEventListener('click', cancel);
   ui_Quit.addEventListener('click', quit);
@@ -106,15 +109,15 @@ function init(e) {
 
 function matches(e) {
   const t = e.target;
-  //console.log(`${t} clicked`);
+  console.log(`${t} clicked`);
   //console.log(t.nodeName);
   if (gameState === userSelecting || gameState === gameGoing) {
     if (t.nodeName === 'SPAN') {
       const p = t.parentElement;
       let i = p.id[3];
-      console.log(i)
+      //console.log(i)
       i = Number(i);
-      console.log(ui_rows[i]);
+      //console.log(ui_rows[i]);
       if (gameState === gameGoing) {
         selectedRowIndex = i;
         rows_previous = Array.from(rows);
@@ -134,8 +137,17 @@ function matches(e) {
   }
 }
 
+function response(e) {
+  console.log('response begin');
+  // new state, buttons
+  gameState = gameGoing;
+  setButtons();
+  console.log('response end');
+}
+
 function ok(e) {
   console.log("ok clicked")
+  console.assert(false);
   if (gameState === gameBegin) {
     if (firstMoveByUser) {
       // new state
@@ -146,6 +158,10 @@ function ok(e) {
     }
     setButtons();
   } else if (gameState === userSelecting) {
+      //simulate response
+      console.log('fire response begin')
+      setTimeout(() => document.dispatchEvent(simulatedResponseEvent), 2000);
+      console.log('fire response end');
       // new state, buttons
       gameState = compiSelecting;
       setButtons();
