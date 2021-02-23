@@ -5,10 +5,11 @@
 let rows;
 let rows_previous;
 
-let selectedRowIndex;
+let selectedRowIndex; //todo: set to undefined or null, when not in use
+let nMatchesTaken; //todo: analog
 
 // game states
-const gameBegin = 0, userSelecting = 1, compiSelecting = 2, gameGoing = 3, gameOver = 4;
+const gameBegin = 0, userSelecting = 1, compiSelecting = 2, gameGoing = 3/*, gameOver = 4*/;
 let gameState;
 
 // rules
@@ -17,6 +18,10 @@ let firstMoveByUser = true;
 function resetRows() {
   rows = [1,2,3,4,5];
   rows_previous = Array.from(rows);
+}
+
+function nMatches() {
+  return rows.reduce((total,num) => total + num,0);
 }
 
 // UI
@@ -101,6 +106,7 @@ function init(e) {
   // reset and show rows
   resetRows();
   showRows();
+  console.log(nMatches());
   // new state, buttons
   gameState = gameBegin;
   setButtons();
@@ -123,8 +129,13 @@ function matches(e) {
         rows_previous = Array.from(rows);
       }
       if (i === selectedRowIndex) {
-        rows[i] -= 1;
-        showRow(i);
+        if (nMatchesTaken < 3) {
+          rows[i] -= 1;
+          nMatchesTaken += 1;
+          showRow(i);
+        } else {
+          console.log('already 3 matches taken');
+        }
       } else {
         console.log('clicked other row')
       }
@@ -139,15 +150,23 @@ function matches(e) {
 
 function response(e) {
   console.log('response begin');
-  // new state, buttons
-  gameState = gameGoing;
-  setButtons();
+  if (nMatches() > 1) {
+    // new state, buttons
+    gameState = gameGoing;
+    setButtons();
+  } else {
+    let s = (nMatches() === 1) ? "You won!" : "You lost!";
+    alert(s);
+    // new state, buttons
+    gameState = gameBegin;
+    setButtons();
+    resetRows();
+  }
   console.log('response end');
 }
 
 function ok(e) {
-  console.log("ok clicked")
-  console.assert(false);
+  console.log("ok clicked");
   if (gameState === gameBegin) {
     if (firstMoveByUser) {
       // new state
@@ -187,13 +206,14 @@ function cancel(e) {
 function quit(e) {
   console.log("quit clicked")
   if (gameState === userSelecting || gameState === gameGoing) {
-    // confirm: todo
-    // reset rows
-    resetRows();
-    showRows();
-    // new state, buttons
-    gameState = gameBegin;
-    setButtons();
+    if (confirm("Quitting means you lost the game.")) {
+      // reset rows
+      resetRows();
+      showRows();
+      // new state, buttons
+      gameState = gameBegin;
+      setButtons();
+    }
   } else {
     console.log("quit has no effect")
   }
