@@ -13,7 +13,7 @@ const gameBegin = 0, userSelecting = 1, compiSelecting = 2, gameGoing = 3/*, gam
 let gameState;
 
 // rules
-let firstMoveByUser = true;
+let firstMoveByUser = false;
 
 function resetRows() {
   rows = [1,2,3,4,5];
@@ -22,6 +22,32 @@ function resetRows() {
 
 function nMatches() {
   return rows.reduce((total,num) => total + num,0);
+}
+
+function setGameState(newState) {
+  switch (newState) {
+    case gameBegin:
+      resetRows();
+      showRows();
+      ui_message.innerText = 'Click Start to begin the game';
+      break;
+    case gameGoing:
+      nMatchesTaken = 0;
+      selectedRowIndex = -1; //undef
+      rows_previous = Array.from(rows);
+      break;
+    case userSelecting:
+      break;
+    case compiSelecting:
+      //simulate response
+      console.log('fire response begin')
+      setTimeout(() => document.dispatchEvent(simulatedResponseEvent), 2000);
+      console.log('fire response end');
+      break;
+    default:
+      console.assert(false);
+  }
+  gameState = newState;
 }
 
 // UI
@@ -103,14 +129,8 @@ function loadEventListeners() {
 // event listeners
 function init(e) {
   console.log(e)
-  // reset and show rows
-  resetRows();
-  showRows();
-  console.log(nMatches());
-  // new state, buttons
-  gameState = gameBegin;
+  setGameState(gameBegin);
   setButtons();
-  ui_message.innerText = 'Click Start to begin the game';
 }
 
 function matches(e) {
@@ -126,7 +146,6 @@ function matches(e) {
       //console.log(ui_rows[i]);
       if (gameState === gameGoing) {
         selectedRowIndex = i;
-        rows_previous = Array.from(rows);
       }
       if (i === selectedRowIndex) {
         if (nMatchesTaken < 3) {
@@ -139,10 +158,10 @@ function matches(e) {
       } else {
         console.log('clicked other row')
       }
+      // new state, buttons
+      setGameState(userSelecting);
+      setButtons();
     }
-    // new state, buttons
-    gameState = userSelecting;
-    setButtons();
   } else {
     console.log("row click has no effect")
   }
@@ -152,15 +171,13 @@ function response(e) {
   console.log('response begin');
   if (nMatches() > 1) {
     // new state, buttons
-    gameState = gameGoing;
+    setGameState(gameGoing);
     setButtons();
   } else {
     let s = (nMatches() === 1) ? "You won!" : "You lost!";
     alert(s);
-    // new state, buttons
-    gameState = gameBegin;
+    setGameState(gameBegin);
     setButtons();
-    resetRows();
   }
   console.log('response end');
 }
@@ -169,20 +186,13 @@ function ok(e) {
   console.log("ok clicked");
   if (gameState === gameBegin) {
     if (firstMoveByUser) {
-      // new state
-      gameState = gameGoing;
+      setGameState(gameGoing);
     } else {
-      // new state
-      gameState = compiSelecting;
+      setGameState(compiSelecting);
     }
     setButtons();
   } else if (gameState === userSelecting) {
-      //simulate response
-      console.log('fire response begin')
-      setTimeout(() => document.dispatchEvent(simulatedResponseEvent), 2000);
-      console.log('fire response end');
-      // new state, buttons
-      gameState = compiSelecting;
+      setGameState(compiSelecting);
       setButtons();
   } else {
     console.log("ok has no effect")
@@ -196,7 +206,7 @@ function cancel(e) {
     rows[selectedRowIndex] = rows_previous[selectedRowIndex];
     showRow(selectedRowIndex);
     // new state, buttons
-    gameState = gameGoing;
+    setGameState(gameGoing);
     setButtons();
   } else {
     console.log("cancel has no effect")
@@ -206,12 +216,8 @@ function cancel(e) {
 function quit(e) {
   console.log("quit clicked")
   if (gameState === userSelecting || gameState === gameGoing) {
-    if (confirm("Quitting means you lost the game.")) {
-      // reset rows
-      resetRows();
-      showRows();
-      // new state, buttons
-      gameState = gameBegin;
+    if (confirm("Quitting means you lost the game!")) {
+      setGameState(gameBegin);
       setButtons();
     }
   } else {
