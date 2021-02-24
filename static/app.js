@@ -24,6 +24,18 @@ function nMatches() {
   return rows.reduce((total,num) => total + num,0);
 }
 
+// for simulation
+function takeOffMatches() {
+  console.assert(nMatches() > 0);
+  for (let i = 4; i >= 0; i--) {
+    if (rows[i] > 0) {
+      let n = Math.min(3, rows[i]);
+      rows[i] -= n;
+      return i;
+    }
+  }
+}
+
 function setGameState(newState) {
   switch (newState) {
     case gameBegin:
@@ -170,7 +182,8 @@ function matches(e) {
 function response(e) {
   console.log('response begin');
   if (nMatches() > 1) {
-    // new state, buttons
+    let i = takeOffMatches();
+    showRow(i);
     setGameState(gameGoing);
     setButtons();
   } else {
