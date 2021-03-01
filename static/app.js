@@ -9,11 +9,15 @@ let selectedRowIndex; //todo: set to undefined or null, when not in use
 let nMatchesTaken; //todo: analog
 
 // game states
-const gameBegin = 0, userSelecting = 1, compiSelecting = 2, gameGoing = 3/*, gameOver = 4*/;
+const gameBegin = 0, userSelecting = 1, appSelecting = 2, gameGoing = 3/*, gameOver = 4*/;
 let gameState;
 
 // rules
 let firstMoveByUser = true;
+
+//..
+let simulateResponse = false;
+let appLevel = 1; // smartness of the app as a player
 
 function resetRows() {
   rows = [1,2,3,4,5];
@@ -22,6 +26,20 @@ function resetRows() {
 
 function nMatches() {
   return rows.reduce((total,num) => total + num, 0);
+}
+
+/**
+ * Computes the parameter for the next_move route
+ * @returns {String} - the parameters, with leading slash
+ * @example rows == [1,0,3,2,3], appLevel == 1 --> '/10323/1'
+ */
+function getNextMoveParams() {
+  let result = "/";
+  for (let i = 0; i < 5; i++) {
+    result += String(rows[i]);
+  }
+  result += "/" + String(appLevel);
+  return result;
 }
 
 /**
@@ -56,18 +74,37 @@ function enterGameState(newState) {
       ui_message.innerText = 'click on a row and take off up to 3 matches';
       break;
     case userSelecting:
-      if (nMatchesTaken < 3) {
+      if ((nMatchesTaken < 3) && (rows[selectedRowIndex]) > 0) {
         ui_message.innerText = 'Take off another match or click OK or Cancel';
       } else {
-        ui_message.innerText = 'You took off 3 matches, click OK or Cancel';
+        ui_message.innerText = 'You took off 3 resp. all matches, click OK or Cancel';
       }
       break;
-    case compiSelecting:
-      //simulate response
-      console.log('fire response begin')
-      ui_message.innerText = 'Wait for the compi to take off matches';
-      setTimeout(() => document.dispatchEvent(simulatedResponseEvent), 2000);
-      console.log('fire response end');
+    case appSelecting:
+      ui_message.innerText = 'Wait for the app to take off matches';
+      if (simulateResponse) {
+        //simulate response
+        console.log('fire simulated response begin')
+        setTimeout(() => document.dispatchEvent(simulatedResponseEvent), 2000);
+        console.log('fire simulated response end');
+      } else {
+        // send request
+        console.log('send request begin');
+        const xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function () {
+          console.log('handle response begin');
+          console.log(`${this.readyState}, ${this.status}`);
+          if (this.readyState === 4 && this.status === 200) {
+            console.log(this.responseText);
+            processResponse(this.responseText);
+          }
+          console.log('handle response end');
+        };
+        const url = "http://localhost:5000/next_move" + getNextMoveParams();
+        xmlHttp.open("GET", url, true);
+        xmlHttp.send();
+        console.log('send request end');
+      }
       break;
     default:
       console.assert(false);
@@ -155,7 +192,7 @@ const simulatedResponseEvent = new Event('simulatedResponse');
 
 function loadEventListeners() {
   document.addEventListener('DOMContentLoaded', init);
-  document.addEventListener('simulatedResponse', response, true);
+  document.addEventListener('simulatedResponse', simResponse, true);
   ui_matches.addEventListener('click', matches);
   ui_OK.addEventListener('click', ok);
   ui_Cancel.addEventListener('click', cancel);
@@ -185,7 +222,7 @@ function matches(e) {
   console.log(`${t} clicked`);
   // the event only has an effect for the following 2 states
   if (gameState === userSelecting || gameState === gameGoing) {
-    // additinally: the user must click on or near a symbol representing a match.
+    // additionally: the user must click on or near a symbol representing a match.
     if (t.nodeName === 'SPAN') {
       const p = t.parentElement;
       let i = p.id[3]; // the char at this index gives the row-index
@@ -217,10 +254,10 @@ function matches(e) {
 }
 
 /**
- * Handle the response of the computer, currently simulated.
+ * Handle the response of the app, simulated.
  */
-function response(e) {
-  console.log('response begin');
+function simResponse(e) {
+  console.log('simulate response begin');
   if (nMatches() > 1) {
     let i = takeOffMatches();
     showRow(i);
@@ -230,7 +267,40 @@ function response(e) {
     alert(s);
     enterGameState(gameBegin);
   }
-  console.log('response end');
+  console.log('simulate response end');
+}
+
+/**
+ * Handle the response of the app.
+ */
+function processResponse(text) {
+  const textJson = JSON.parse(text);
+  if ('gameContinues' in textJson) {
+    let c = textJson.gameContinues;
+    if (c === -1) {
+      alert('You won');
+      enterGameState(gameBegin);
+    } else {
+      let i = textJson.rowIndex;
+      let n = textJson.numberOfMatches;
+      console.log(`c:${c}, i:${i}, n:${n}`);
+      rows[i] -= n;
+      showRow(i);
+      if (c === 0) {
+        //alert shows before row is updated, use settimeout as workaround
+        setTimeout(function(){
+          alert('You lost! bbb  ');
+          enterGameState(gameBegin);
+          }, 1000);
+      } else {
+        enterGameState(gameGoing);
+      }
+    }
+  } else {
+    console.assert('error' in textJson);
+    alert(textJson.error);
+    enterGameState(gameBegin);
+  }
 }
 
 /**
@@ -242,10 +312,10 @@ function ok(e) {
     if (firstMoveByUser) {
       enterGameState(gameGoing);
     } else {
-      enterGameState(compiSelecting);
+      enterGameState(appSelecting);
     }
   } else if (gameState === userSelecting) {
-      enterGameState(compiSelecting);
+    enterGameState(appSelecting);
   } else {
     console.log("ok has no effect")
   }

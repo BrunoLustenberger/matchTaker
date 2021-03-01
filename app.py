@@ -11,7 +11,7 @@ The following URLs are served:
 
 import json
 
-from flask import Flask
+from flask import Flask, render_template
 
 from models import solver, game_states
 from models.game_states import GameState, GameMove
@@ -23,7 +23,8 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     """Main page, currently empty."""
-    return 'Hello from MatchTaker. Currently only API!'
+    # return 'Hello from MatchTaker. Currently only API!'
+    return render_template('index.html')
 
 
 @app.route('/next_move', defaults={'rows_state': '12345', 'level': 0})
@@ -40,16 +41,31 @@ def next_move(rows_state, level):
         /next_move
         /next_move/10340
         /next_move/10340/2
-    <rows_state> is a sequence of digits of 0..5. Digit at index k must be <= k+1 (where first index is k=0)
+    <rows_state> is a sequence of digits of 0..5.
+    Digit at index k must be <= k+1 (where first index is k=0).
     <level> is integer in 0..2
 
-    Response:
-    Will be changed, see todo
-
+    Response: see also doc of return value of solver.solve.
+        One of the 3 json strings:
+        1. {“gameContinues“:-1}
+           Meaning: "You won".
+        2. {“gameContinues“:c, "rowIndex":i, "numberOfMatches":n}
+           where c in 0..3, i in 0..4, n in 1..3.
+           Meaning:
+             The move of the app is taking n matches from the row with index i.
+             c == 0: "the App won". There is only 1 match left.
+             c == 1: game continues, i.e. more than 1 match left. No further information.
+             c == 2: game continues and you have a safe strategy to win.
+             c == 3: game continues and your opponent (the App) has a safe strategy to win.
+        3. {"error" : message}
+           where message is a string describing the error.
+           Meaning:
+           A software error occurred while the app executed the request.
     """
-    # todo: return only game-move and game-continue in response, no text
     result = {}
     try:
+        # log
+        print(f"rows {rows_state}, level {level}")
         # check and convert input
         rows = list(rows_state)
         game_states.Error.check(all([('0' <= rows[k] <= '5') for k in range(len(rows))]),
@@ -59,14 +75,10 @@ def next_move(rows_state, level):
         # compute next move
         game_move, game_continues = solver.solve(game_state, level)
         # compose result
-        if game_continues == -1:
-            result = {"end of game": "You won! :-)"}
-        else:
-            result = {"row index": game_move.row_index, "number of matches": game_move.match_count}
-            if game_continues == 0:
-                result["end of game"] = "You lost! :-("
-            else:
-                result["game continues"] = game_continues
+        result["gameContinues"] = game_continues
+        if game_continues >= 0:
+            result["rowIndex"] = game_move.row_index
+            result["numberOfMatches"] = game_move.match_count
     except (solver.Error, game_states.Error) as e:
         result["error"] = str(e)
     finally:
