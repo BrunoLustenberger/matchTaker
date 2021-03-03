@@ -287,9 +287,9 @@ function processResponse(text) {
       rows[i] -= n;
       showRow(i);
       if (c === 0) {
-        //alert shows before row is updated, use settimeout as workaround
+        //alert shows before row is updated, use setTimeout as workaround
         setTimeout(function(){
-          alert('You lost! bbb  ');
+          alert('You lost!');
           enterGameState(gameBegin);
           }, 1000);
       } else {
