@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    """Main page, currently empty."""
+    """Main page."""
     # return 'Hello from MatchTaker. Currently only API!'
     return render_template('index.html')
 
@@ -86,7 +86,7 @@ def next_move(rows_state, level):
     # return result
     return json.dumps(result)
 
+set_current_tree(GameState([1, 2, 3, 4, 5]))
 
 if __name__ == '__main__':
-    set_current_tree(GameState([1, 2, 3, 4, 5]))
     app.run()
