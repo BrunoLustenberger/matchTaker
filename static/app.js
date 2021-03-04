@@ -19,7 +19,7 @@ let firstMoveByUser = true;
 let simulateResponse = false;
 let appLevel = 2; // smartness of the app as a player
 
-//..
+// baseUrl
 const baseUrl = "https://matchtaker.herokuapp.com";
 //const baseUrl = "http://localhost:5000";
 

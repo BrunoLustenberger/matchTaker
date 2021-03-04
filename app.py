@@ -13,17 +13,21 @@ import json
 
 from flask import Flask, render_template
 
+import logging
+from utils import mylogconfig
+
 from models import solver, game_states
-from models.game_states import GameState, GameMove
+from models.game_states import GameState  # , GameMove
 from models.game_trees import set_current_tree
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
+def main_page():
     """Main page."""
     # return 'Hello from MatchTaker. Currently only API!'
+    logging.info("main_page")
     return render_template('index.html')
 
 
@@ -65,7 +69,7 @@ def next_move(rows_state, level):
     result = {}
     try:
         # log
-        print(f"rows {rows_state}, level {level}")
+        logging.info(f"next_move, rows {rows_state}, level {level}")
         # check and convert input
         rows = list(rows_state)
         game_states.Error.check(all([('0' <= rows[k] <= '5') for k in range(len(rows))]),
@@ -84,8 +88,11 @@ def next_move(rows_state, level):
     finally:
         pass  # no return here, see PEP 601
     # return result
+    logging.info(f"next_move, result {result}")
     return json.dumps(result)
 
+
+mylogconfig.simplest()
 set_current_tree(GameState([1, 2, 3, 4, 5]))
 
 if __name__ == '__main__':
