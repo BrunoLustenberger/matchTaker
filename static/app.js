@@ -17,7 +17,11 @@ let firstMoveByUser = true;
 
 //..
 let simulateResponse = false;
-let appLevel = 1; // smartness of the app as a player
+let appLevel = 2; // smartness of the app as a player
+
+//..
+const baseUrl = "https://matchtaker.herokuapp.com";
+//const baseUrl = "http://localhost:5000";
 
 function resetRows() {
   rows = [1,2,3,4,5];
@@ -100,7 +104,7 @@ function enterGameState(newState) {
           }
           console.log('handle response end');
         };
-        const url = "http://localhost:5000/next_move" + getNextMoveParams();
+        const url = baseUrl + "/next_move" + getNextMoveParams();
         xmlHttp.open("GET", url, true);
         xmlHttp.send();
         console.log('send request end');
