@@ -104,10 +104,13 @@ function enterGameState(newState) {
           console.log(`${this.readyState}, ${this.status}`);
           alert('handle response begin');
           alert(`${this.readyState}, ${this.status}`);
-          if (this.readyState === 4 && this.status === 200) {
+          //if (this.readyState === 4 && this.status === 200) {
+          if (this.readyState === 4) {
             console.log(this.responseText);
             alert(this.responseText);
-            processResponse(this.responseText);
+            if (this.status === 200) {
+              processResponse(this.responseText);
+            }
           }
           console.log('handle response end');
           alert('handle response end');
