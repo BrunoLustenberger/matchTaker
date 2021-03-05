@@ -85,9 +85,12 @@ function enterGameState(newState) {
       }
       break;
     case appSelecting:
+      alert('case appSelecting');
       ui_message.innerText = 'Wait for the app to take off matches';
+      alert(`simulate ${simulateResponse}`);
       if (simulateResponse) {
         //simulate response
+        alert('simulating');
         console.log('fire simulated response begin')
         setTimeout(() => document.dispatchEvent(simulatedResponseEvent), 2000);
         console.log('fire simulated response end');
