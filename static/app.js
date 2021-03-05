@@ -106,7 +106,7 @@ function enterGameState(newState) {
           alert(`${this.readyState}, ${this.status}`);
           //if (this.readyState === 4 && this.status === 200) {
           if (this.readyState === 4) {
-            console.log(this.responseText);
+            console.log(`responseText ${this.responseText}`);
             alert(this.responseText);
             if (this.status === 200) {
               processResponse(this.responseText);
