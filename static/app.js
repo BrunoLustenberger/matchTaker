@@ -116,7 +116,8 @@ function enterGameState(newState) {
           alert('handle response end');
         };
         const url = baseUrl + "/next_move" + getNextMoveParams();
-        xmlHttp.open("GET", url, true);
+        //xmlHttp.open("GET", url, true);
+        xmlHttp.open("GET", url, false);
         xmlHttp.send();
         console.log('send request end');
         alert('send request end');
