@@ -94,20 +94,26 @@ function enterGameState(newState) {
       } else {
         // send request
         console.log('send request begin');
+        alert('send request begin');
         const xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function () {
           console.log('handle response begin');
           console.log(`${this.readyState}, ${this.status}`);
+          alert('handle response begin');
+          alert(`${this.readyState}, ${this.status}`);
           if (this.readyState === 4 && this.status === 200) {
             console.log(this.responseText);
+            alert(this.responseText);
             processResponse(this.responseText);
           }
           console.log('handle response end');
+          alert('handle response end');
         };
         const url = baseUrl + "/next_move" + getNextMoveParams();
         xmlHttp.open("GET", url, true);
         xmlHttp.send();
         console.log('send request end');
+        alert('send request end');
       }
       break;
     default:
