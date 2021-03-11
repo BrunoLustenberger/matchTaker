@@ -1,3 +1,6 @@
+// utils
+const tempVersion = 'ccc';
+
 // model
 // -----
 
@@ -16,7 +19,7 @@ let gameState;
 let firstMoveByUser = true;
 
 //..
-let simulateResponse = false;
+let simulateResponse = true;
 let appLevel = 2; // smartness of the app as a player
 
 // baseUrl
@@ -136,10 +139,26 @@ const ui_Cancel = document.getElementById("Cancel");
 const ui_Quit = document.getElementById("Quit");
 const ui_matches = document.getElementById("matches");
 const ui_message = document.getElementById("message");
+const ui_body = document.querySelector('body');
+const uiNavbar = document.querySelector('.navbar');
+
 
 const ui_rows = [];
 for (let i=0; i<5; i++) {
   ui_rows.push(document.getElementById("row"+String(i)));
+}
+
+/**
+ * Set css properties with runtime information
+ */
+function dynamicCss() {
+  //ui_body.css({'padding_top' : '80px'}); -- doesn't work
+  //console.log(uiNavbar.clientHeight);
+  //console.log(uiNavbar.style.height); --> empty
+  //console.log(uiNavbar.getBoundingClientRect().height);
+  //ui_body.style.paddingTop = uiNavbar.height(); -- no such function
+  ui_body.style.paddingTop = `${uiNavbar.getBoundingClientRect().height}px`;
+  //todo: use a css class
 }
 
 // helper functions
@@ -224,7 +243,9 @@ loadEventListeners();
  * Handle page-load event.
  */
 function init(e) {
-  console.log(e)
+  console.log(tempVersion);
+  console.log(e);
+  dynamicCss();
   enterGameState(gameBegin);
 }
 
