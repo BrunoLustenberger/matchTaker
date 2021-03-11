@@ -11,10 +11,10 @@
   <title>matchTaker</title>
 </head>
 
-<body> <!-- style="padding-top: 56px" -->
+<body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-sm navbar-light bg-light mb-3 fixed-top"> <!--fixed-top -->
+  <nav class="navbar navbar-expand-sm navbar-light bg-light mb-3 fixed-top">
       <div class="container">
           <a class="navbar-brand" href="#">matchTaker</a>
           <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
@@ -39,13 +39,7 @@
       </div>
   </nav>
 
-  <!-- Message Area-->
-  <div class="container mb-3"> <!-- todo: hidden by navbar -->
-    <!--
-    <label for="message" class="visuallyhidden"></label>
-    -->
-    <textarea class="form-control" id="message" rows="1" readonly>xxx</textarea>
-  </div>
+  <!-- Message Area was here -->
 
   <!-- Matches -->
 
@@ -68,10 +62,17 @@
   </div>
 
   <!-- Buttons -->
-  <div class="container mb-3"> <!--fixed-bottom -->
-    <button class="btn btn-block btn-outline-success" type="button" id="OK">OK</button>
-    <button class="btn btn-block btn-outline-dark" type="button" id="Cancel">Cancel</button>
-    <button class="btn btn-block btn-outline-danger" type="button" id="Quit">Quit</button>
+  <div class="container bg-light pb-2 fixed-bottom" id="buttons">
+    <!-- Message Area-->
+    <div class="container my-2">
+      <!--
+      <label for="message" class="visuallyhidden"></label>
+      -->
+      <textarea class="form-control" id="message" rows="1" readonly>xxx</textarea>
+    </div>
+    <button class="btn btn-outline-success" type="button" id="OK">OK</button>
+    <button class="btn btn-outline-dark" type="button" id="Cancel">Cancel</button>
+    <button class="btn btn-outline-danger" type="button" id="Quit">Quit</button>
   </div>
 
 

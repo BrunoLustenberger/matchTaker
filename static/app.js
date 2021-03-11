@@ -1,5 +1,5 @@
 // utils
-const tempVersion = 'ccc';
+const tempVersion = 'aaa';
 
 // model
 // -----
@@ -141,6 +141,7 @@ const ui_matches = document.getElementById("matches");
 const ui_message = document.getElementById("message");
 const ui_body = document.querySelector('body');
 const uiNavbar = document.querySelector('.navbar');
+const uiButtons = document.getElementById("buttons");
 
 
 const ui_rows = [];
@@ -159,6 +160,8 @@ function dynamicCss() {
   //ui_body.style.paddingTop = uiNavbar.height(); -- no such function
   ui_body.style.paddingTop = `${uiNavbar.getBoundingClientRect().height}px`;
   //todo: use a css class
+  //ui_body.style.paddingBottom = `${ui_OK.getBoundingClientRect().height * 3}px`;
+  ui_body.style.paddingBottom = `${uiButtons.getBoundingClientRect().height}px`;
 }
 
 // helper functions
