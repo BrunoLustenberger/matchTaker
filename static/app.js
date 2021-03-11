@@ -1,6 +1,15 @@
 // utils
 const tempVersion = 'aaa';
 
+function wait(milliseconds) {
+  console.log('dummy wait ' + String(milliseconds));
+  return new Promise(resolve => {
+      setTimeout(() => {
+          resolve()
+      }, milliseconds)
+  })
+}
+
 // model
 // -----
 
@@ -19,12 +28,12 @@ let gameState;
 let firstMoveByUser = true;
 
 //..
-let simulateResponse = true;
+let simulateResponse = false;
 let appLevel = 2; // smartness of the app as a player
 
 // baseUrl
-const baseUrl = "https://matchtaker.herokuapp.com";
-//const baseUrl = "http://localhost:5000";
+//const baseUrl = "https://matchtaker.herokuapp.com";
+const baseUrl = "http://localhost:5000";
 
 function resetRows() {
   rows = [1,2,3,4,5];
@@ -294,15 +303,27 @@ function matches(e) {
 /**
  * Handle the response of the app, simulated.
  */
-function simResponse(e) {
+async function simResponse(e) {
+  await wait(1000);
   console.log('simulate response begin');
   if (nMatches() > 1) {
     let i = takeOffMatches();
+    ui_rows[i].classList.remove('btn-black');
+    ui_rows[i].classList.add('btn-warning');
+    await wait(500);
     showRow(i);
-    enterGameState(gameGoing);
+    await wait(500);
+    ui_rows[i].classList.remove('btn-warning');
+    ui_rows[i].classList.add('btn-black');
+    if (nMatches() > 1) {
+      enterGameState(gameGoing);
+    } else {
+      console.assert(nMatches() === 1)
+      alert("You lost!")
+      enterGameState(gameBegin);
+    }
   } else {
-    let s = (nMatches() === 1) ? "You won!" : "You lost!";
-    alert(s);
+    alert("You won!");
     enterGameState(gameBegin);
   }
   console.log('simulate response end');
@@ -311,7 +332,7 @@ function simResponse(e) {
 /**
  * Handle the response of the app.
  */
-function processResponse(text) {
+async function processResponse(text) {
   const textJson = JSON.parse(text);
   if ('gameContinues' in textJson) {
     let c = textJson.gameContinues;
@@ -322,8 +343,14 @@ function processResponse(text) {
       let i = textJson.rowIndex;
       let n = textJson.numberOfMatches;
       console.log(`c:${c}, i:${i}, n:${n}`);
+      ui_rows[i].classList.remove('btn-black');
+      ui_rows[i].classList.add('btn-warning');
+      await wait(500);
       rows[i] -= n;
       showRow(i);
+      await wait(500);
+      ui_rows[i].classList.remove('btn-warning');
+      ui_rows[i].classList.add('btn-black');
       if (c === 0) {
         //alert shows before row is updated, use setTimeout as workaround
         setTimeout(function(){
