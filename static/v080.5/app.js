@@ -2,12 +2,19 @@
 const tempVersion = 'aaa';
 
 function wait(milliseconds) {
-  console.log('dummy wait ' + String(milliseconds));
+  console.log('wait ' + String(milliseconds));
   return new Promise(resolve => {
       setTimeout(() => {
           resolve()
       }, milliseconds)
   })
+}
+
+function scrollToMiddle(element) {
+  let box = element.getBoundingClientRect();
+  let x = box.x + window.pageXOffset;
+  let y = box.y + window.pageYOffset - window.innerHeight / 2;
+  window.scrollTo(x,y);
 }
 
 // model
@@ -25,11 +32,11 @@ const gameBegin = 0, userSelecting = 1, appSelecting = 2, gameGoing = 3/*, gameO
 let gameState;
 
 // rules
-let firstMoveByUser = true;
+let firstMoveByUser = false;
 
 //..
 let simulateResponse = false;
-let appLevel = 2; // smartness of the app as a player
+let appLevel = 0; // smartness of the app as a player
 
 // baseUrl
 //const baseUrl = "https://matchtaker.herokuapp.com";
@@ -101,7 +108,7 @@ function enterGameState(newState) {
       if (simulateResponse) {
         //simulate response
         console.log('fire simulated response begin')
-        setTimeout(() => document.dispatchEvent(simulatedResponseEvent), 2000);
+        setTimeout(() => document.dispatchEvent(simulatedResponseEvent), 1000);
         console.log('fire simulated response end');
       } else {
         // send request
@@ -128,7 +135,7 @@ function enterGameState(newState) {
         xmlHttp.open("GET", url, true);
         //xmlHttp.open("GET", url, false);
         xmlHttp.send();
-        //console.log('send request end');
+        console.log('send request end');
         //alert('send request end');
       }
       break;
@@ -304,15 +311,16 @@ function matches(e) {
  * Handle the response of the app, simulated.
  */
 async function simResponse(e) {
-  await wait(1000);
+  //await wait(1000);
   console.log('simulate response begin');
   if (nMatches() > 1) {
     let i = takeOffMatches();
     ui_rows[i].classList.remove('btn-black');
     ui_rows[i].classList.add('btn-warning');
-    await wait(500);
+    scrollToMiddle(ui_rows[i]);
+    await wait(1000);
     showRow(i);
-    await wait(500);
+    await wait(1000);
     ui_rows[i].classList.remove('btn-warning');
     ui_rows[i].classList.add('btn-black');
     if (nMatches() > 1) {
@@ -345,10 +353,11 @@ async function processResponse(text) {
       console.log(`c:${c}, i:${i}, n:${n}`);
       ui_rows[i].classList.remove('btn-black');
       ui_rows[i].classList.add('btn-warning');
-      await wait(500);
+      scrollToMiddle(ui_rows[i]);
+      await wait(1000);
       rows[i] -= n;
       showRow(i);
-      await wait(500);
+      await wait(1000);
       ui_rows[i].classList.remove('btn-warning');
       ui_rows[i].classList.add('btn-black');
       if (c === 0) {
