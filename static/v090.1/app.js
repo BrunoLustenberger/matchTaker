@@ -28,15 +28,16 @@ let selectedRowIndex; //todo: set to undefined or null, when not in use
 let nMatchesTaken; //todo: analog
 
 // game states
-const gameBegin = 0, userSelecting = 1, appSelecting = 2, gameGoing = 3/*, gameOver = 4*/;
+const gameBegin = 0, userSelecting = 1, appSelecting = 2, gameGoing = 3, gameOver = 4;
 let gameState;
+let youWon;
 
 // rules
 let firstMoveByUser = false;
 
 //..
-let simulateResponse = false;
-let appLevel = 0; // smartness of the app as a player
+let simulateResponse = true;
+let appLevel = 1; // smartness of the app as a player
 
 // baseUrl
 const baseUrl = "https://matchtaker.herokuapp.com";
@@ -74,6 +75,9 @@ function takeOffMatches() {
   for (let i = 4; i >= 0; i--) {
     if (rows[i] > 0) {
       let n = Math.min(3, rows[i]);
+      if (n === nMatches()) {
+        n -= 1; //must not take all matches
+      }
       rows[i] -= n;
       return i;
     }
@@ -88,23 +92,25 @@ function enterGameState(newState) {
     case gameBegin:
       resetRows();
       showRows();
-      ui_message.innerText = 'Click Start to begin the game';
+      ui_message.value = 'Click Start to begin the game.';
       break;
     case gameGoing:
       nMatchesTaken = 0;
       selectedRowIndex = -1; //undef
       rows_previous = Array.from(rows);
-      ui_message.innerText = 'click on a row and take off up to 3 matches';
+      ui_message.value = 'Take off matches by clicking on them.';
       break;
     case userSelecting:
-      if ((nMatchesTaken < 3) && (rows[selectedRowIndex]) > 0) {
-        ui_message.innerText = 'Take off another match or click OK or Cancel';
+      let nMoreMatches = Math.min(3-nMatchesTaken, rows[selectedRowIndex]);
+      if (nMoreMatches > 0) {
+        ui_message.value = `You can take off ${nMoreMatches} more match`
+            + (nMoreMatches > 1 ? 'es' : '') + ' from this row.';
       } else {
-        ui_message.innerText = 'You took off 3 resp. all matches, click OK or Cancel';
+        ui_message.value = 'You can take no more matches from this row.';
       }
       break;
     case appSelecting:
-      ui_message.innerText = 'Wait for the app to take off matches';
+      ui_message.value = 'Wait for the app to take off matches';
       if (simulateResponse) {
         //simulate response
         console.log('fire simulated response begin')
@@ -139,6 +145,9 @@ function enterGameState(newState) {
         //alert('send request end');
       }
       break;
+    case gameOver:
+      ui_message.value = youWon? 'You won! :-)' : 'You lost :-(';
+      break;
     default:
       console.assert(false);
   }
@@ -158,7 +167,9 @@ const ui_message = document.getElementById("message");
 const ui_body = document.querySelector('body');
 const uiNavbar = document.querySelector('.navbar');
 const uiButtons = document.getElementById("buttons");
-
+const uiAlert = document.getElementById("modalAlert");
+const uiAlertTitle = document.getElementById("modalAlertTitle");
+const uiAlertDetail = document.getElementById("modalAlertDetail");
 
 const ui_rows = [];
 for (let i=0; i<5; i++) {
@@ -181,6 +192,19 @@ function dynamicCss() {
 }
 
 // helper functions
+
+
+/**
+ * Shows a modal alert dialog
+ * @param {String} title - title resp. short message.
+ * @param {String} detail - detailed or additional message.
+ */
+function showAlert(title, detail) {
+  //uiAlert.modal(); -- doesn't work
+  uiAlertTitle.innerText = title;
+  uiAlertDetail.innerText = detail;
+  $("#modalAlert").modal(); //this works
+}
 
 /**
  * Shows a row.
@@ -229,6 +253,12 @@ function setButtons() {
       ui_OK.disabled = false;
       ui_Cancel.disabled = false;
       ui_Quit.disabled = false;
+      break;
+    case gameOver:
+      ui_OK.innerText = 'OK';
+      ui_OK.disabled = false;
+      ui_Cancel.disabled = true;
+      ui_Quit.disabled = true;
       break;
     default:
       ui_OK.innerText = 'OK';
@@ -292,10 +322,10 @@ function matches(e) {
           nMatchesTaken += 1;
           showRow(i);
         } else {
-          alert('You cannot take off more than 3 matches. Click OK or Cancel!');
+          showAlert('No more matches', 'You cannot take off more than 3 matches. Click OK or Cancel!');
         }
       } else { // another row than the one before was clicked
-        alert('To take off matches from another row, click Cancel first!');
+        showAlert('Other row', 'To take off matches from another row, click Cancel first!');
       }
       // remain in state userSelecting or enter it
       enterGameState(userSelecting);
@@ -311,7 +341,6 @@ function matches(e) {
  * Handle the response of the app, simulated.
  */
 async function simResponse(e) {
-  //await wait(1000);
   console.log('simulate response begin');
   if (nMatches() > 1) {
     let i = takeOffMatches();
@@ -326,13 +355,13 @@ async function simResponse(e) {
     if (nMatches() > 1) {
       enterGameState(gameGoing);
     } else {
-      console.assert(nMatches() === 1)
-      alert("You lost!")
-      enterGameState(gameBegin);
+      console.assert(nMatches() === 1);
+      youWon = false;
+      enterGameState(gameOver);
     }
   } else {
-    alert("You won!");
-    enterGameState(gameBegin);
+    youWon = true;
+    enterGameState(gameOver);
   }
   console.log('simulate response end');
 }
@@ -345,8 +374,8 @@ async function processResponse(text) {
   if ('gameContinues' in textJson) {
     let c = textJson.gameContinues;
     if (c === -1) {
-      alert('You won');
-      enterGameState(gameBegin);
+      youWon = true;
+      enterGameState(gameOver);
     } else {
       let i = textJson.rowIndex;
       let n = textJson.numberOfMatches;
@@ -361,18 +390,22 @@ async function processResponse(text) {
       ui_rows[i].classList.remove('btn-warning');
       ui_rows[i].classList.add('btn-black');
       if (c === 0) {
+        youWon = false;
+        enterGameState(gameOver);
         //alert shows before row is updated, use setTimeout as workaround
+        /*
         setTimeout(function(){
-          alert('You lost!');
-          enterGameState(gameBegin);
+          youWon = false;
+          enterGameState(gameOver);
           }, 1000);
+         */
       } else {
         enterGameState(gameGoing);
       }
     }
   } else {
     console.assert('error' in textJson);
-    alert(textJson.error);
+    showAlert("Error", textJson.error);
     enterGameState(gameBegin);
   }
 }
@@ -390,6 +423,8 @@ function ok(e) {
     }
   } else if (gameState === userSelecting) {
     enterGameState(appSelecting);
+  } else if (gameState === gameOver) {
+    enterGameState(gameBegin);
   } else {
     console.log("ok has no effect")
   }

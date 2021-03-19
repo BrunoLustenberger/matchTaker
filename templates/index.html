@@ -39,7 +39,25 @@
       </div>
   </nav>
 
-  <!-- Message Area was here -->
+    <!-- modal alert -->
+  <div id="modalAlert" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="modalAlertTitle" class="modal-title">Modal Header</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="modalAlertDetail">Some text in the modal.</p>
+        </div>
+        <!-- footer not needed
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        -->
+      </div>
+    </div>
+  </div>
 
   <!-- Matches -->
 
@@ -61,14 +79,12 @@
     </button>
   </div>
 
-  <!-- Buttons -->
+  <!-- Message and Buttons -->
   <div class="bg-light pb-2 fixed-bottom" id="buttons">
     <!-- Message Area-->
     <div class="container my-2">
-      <!--
-      <label for="message" class="visuallyhidden">xx</label>
-      -->
-      <textarea class="form-control" id="message" rows="1" readonly>xxx</textarea>
+      <label for="message" class="sr-only">message</label>
+      <input type="text" readonly class="form-control-plaintext" id="message" value="xxx">
     </div>
     <div class="container d-flex justify-content-between">
       <button class="btn btn-outline-success w-50" type="button" id="OK">OK</button>
@@ -85,7 +101,7 @@
       crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
       crossorigin="anonymous"></script>
-  <script src="../static/v090/app.js"></script>
+  <script src="../static/v090.1/app.js"></script>
 
 </body>
 </html>
