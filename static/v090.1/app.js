@@ -67,10 +67,10 @@ function getNextMoveParams() {
 }
 
 /**
- * Takes off some matches to simulate the move by the computer.
+ * Takes some matches to simulate the move by the computer.
  * @returns {number} - index of row, from which matches were taken
  */
-function takeOffMatches() {
+function takeMatches() {
   console.assert(nMatches() > 0);
   for (let i = 4; i >= 0; i--) {
     if (rows[i] > 0) {
@@ -98,19 +98,21 @@ function enterGameState(newState) {
       nMatchesTaken = 0;
       selectedRowIndex = -1; //undef
       rows_previous = Array.from(rows);
-      ui_message.value = 'Take off matches by clicking on them.';
+      ui_message.value = 'Take matches by clicking on them.';
       break;
     case userSelecting:
       let nMoreMatches = Math.min(3-nMatchesTaken, rows[selectedRowIndex]);
       if (nMoreMatches > 0) {
-        ui_message.value = `You can take off ${nMoreMatches} more match`
+        ui_message.value = `You can take ${nMoreMatches} more match`
             + (nMoreMatches > 1 ? 'es' : '') + ' from this row.';
-      } else {
+      } else if (rows[selectedRowIndex] > 0) {
         ui_message.value = 'You can take no more matches from this row.';
+      } else {
+        ui_message.value = 'You took the last match from this row.';
       }
       break;
     case appSelecting:
-      ui_message.value = 'Wait for the app to take off matches';
+      ui_message.value = 'Wait for the app to take matches';
       if (simulateResponse) {
         //simulate response
         console.log('fire simulated response begin')
@@ -146,7 +148,7 @@ function enterGameState(newState) {
       }
       break;
     case gameOver:
-      ui_message.value = youWon? 'You won! :-)' : 'You lost :-(';
+      ui_message.value = youWon ? 'You won! :-)' : 'You lost :-(';
       break;
     default:
       console.assert(false);
@@ -175,6 +177,12 @@ const ui_rows = [];
 for (let i=0; i<5; i++) {
   ui_rows.push(document.getElementById("row"+String(i)));
 }
+
+const buttonClasses = {
+  "OK" : {"enabled": "btn-success", "disabled": "btn-outline-success"},
+  "Cancel" : {"enabled": "btn-dark", "disabled": "btn-outline-dark"},
+  "Quit" : {"enabled": "btn-danger", "disabled": "btn-outline-danger"}
+};
 
 /**
  * Set css properties with runtime information
@@ -232,39 +240,60 @@ function showRows() {
 }
 
 /**
+ * Enables or disables a button, uses improved appearance.
+ * @param {String} id - html id of button.
+ * @param {Boolean} enable - true/false for enable/disable
+ */
+function enableButton(id, enable) {
+  console.assert(["OK", "Cancel", "Quit"].includes(id));
+  const btn = document.getElementById(id);
+  btn.disabled = ! enable;
+  if (enable) {
+    btn.classList.remove(buttonClasses[id]["disabled"]);
+    btn.classList.add(buttonClasses[id]["enabled"]);
+  } else {
+    btn.classList.remove(buttonClasses[id]["enabled"]);
+    btn.classList.add(buttonClasses[id]["disabled"]);
+  }
+}
+
+/**
  * Sets the buttons depending on gameState
  */
 function setButtons() {
   switch (gameState) {
     case gameBegin:
       ui_OK.innerText = 'Start';
-      ui_OK.disabled = false;
-      ui_Cancel.disabled = true;
-      ui_Quit.disabled = true;
+      enableButton("OK", true);
+      enableButton("Cancel", false);
+      enableButton("Quit", false);
       break;
     case gameGoing:
       ui_OK.innerText = 'OK';
-      ui_OK.disabled = true;
-      ui_Cancel.disabled = true;
-      ui_Quit.disabled = false;
+      enableButton("OK", false);
+      enableButton("Cancel", false);
+      enableButton("Quit", true);
       break;
     case userSelecting:
       ui_OK.innerText = 'OK';
-      ui_OK.disabled = false;
-      ui_Cancel.disabled = false;
-      ui_Quit.disabled = false;
+      enableButton("OK", true);
+      enableButton("Cancel", true);
+      enableButton("Quit", true);
       break;
     case gameOver:
       ui_OK.innerText = 'OK';
-      ui_OK.disabled = false;
-      ui_Cancel.disabled = true;
-      ui_Quit.disabled = true;
+      enableButton("OK", true);
+      enableButton("Cancel", false);
+      enableButton("Quit", false);
+      break;
+    case appSelecting:
+      ui_OK.innerText = 'OK';
+      enableButton("OK", false);
+      enableButton("Cancel", false);
+      enableButton("Quit", false);
       break;
     default:
-      ui_OK.innerText = 'OK';
-      ui_OK.disabled = true;
-      ui_Cancel.disabled = true;
-      ui_Quit.disabled = true;
+      console.assert(false);
   }
 }
 
@@ -322,10 +351,10 @@ function matches(e) {
           nMatchesTaken += 1;
           showRow(i);
         } else {
-          showAlert('No more matches', 'You cannot take off more than 3 matches. Click OK or Cancel!');
+          showAlert('No more matches', 'You cannot take more than 3 matches. Click OK or Cancel!');
         }
       } else { // another row than the one before was clicked
-        showAlert('Other row', 'To take off matches from another row, click Cancel first!');
+        showAlert('Other row', 'To take matches from another row, click Cancel first!');
       }
       // remain in state userSelecting or enter it
       enterGameState(userSelecting);
@@ -343,7 +372,7 @@ function matches(e) {
 async function simResponse(e) {
   console.log('simulate response begin');
   if (nMatches() > 1) {
-    let i = takeOffMatches();
+    let i = takeMatches();
     ui_rows[i].classList.remove('btn-black');
     ui_rows[i].classList.add('btn-warning');
     scrollToMiddle(ui_rows[i]);
