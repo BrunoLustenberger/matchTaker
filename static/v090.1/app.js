@@ -164,6 +164,7 @@ function enterGameState(newState) {
 const ui_OK = document.getElementById("OK");
 const ui_Cancel = document.getElementById("Cancel");
 const ui_Quit = document.getElementById("Quit");
+const ui_QuitYes = document.getElementById("QuitYes");
 const ui_matches = document.getElementById("matches");
 const ui_message = document.getElementById("message");
 const ui_body = document.querySelector('body');
@@ -308,6 +309,7 @@ function loadEventListeners() {
   ui_OK.addEventListener('click', ok);
   ui_Cancel.addEventListener('click', cancel);
   ui_Quit.addEventListener('click', quit);
+  ui_QuitYes.addEventListener('click', quitYes);
 }
 
 loadEventListeners();
@@ -481,11 +483,22 @@ function cancel(e) {
 function quit(e) {
   console.log("quit clicked")
   if (gameState === userSelecting || gameState === gameGoing) {
+    /*
     if (confirm("Quitting means you lost the game!")) {
       enterGameState(gameBegin);
     }
+    */
+    $("#modalQuitConfirm").modal('show');
   } else {
     console.log("quit has no effect")
   }
 }
 
+/**
+ * Handle Quit Confirm.
+ */
+function quitYes(e) {
+  console.log("quitYes clicked");
+  $("#modalQuitConfirm").modal('hide');
+  enterGameState(gameBegin);
+}
