@@ -1,5 +1,5 @@
 // utils
-const tempVersion = 'aaa';
+const tempVersion = 'x';
 
 function wait(milliseconds) {
   console.log('wait ' + String(milliseconds));
@@ -30,18 +30,18 @@ let nMatchesTaken; //todo: analog
 // game states
 const gameBegin = 0, userSelecting = 1, appSelecting = 2, gameGoing = 3, gameOver = 4;
 let gameState;
-let youWon;
+let userWon;
 
 // rules
-let firstMoveByUser = false;
+let firstMoveByUser = true;
 
 //..
-let simulateResponse = true;
-let appLevel = 1; // smartness of the app as a player
+let simulateResponse = false;
+let appLevel = 0; // smartness of the app as a player
 
 // baseUrl
-const baseUrl = "https://matchtaker.herokuapp.com";
-//const baseUrl = "http://localhost:5000";
+//const baseUrl = "https://matchtaker.herokuapp.com";
+const baseUrl = "http://localhost:5000";
 
 function resetRows() {
   rows = [1,2,3,4,5];
@@ -148,7 +148,7 @@ function enterGameState(newState) {
       }
       break;
     case gameOver:
-      ui_message.value = youWon ? 'You won! :-)' : 'You lost :-(';
+      ui_message.value = userWon ? 'You won! :-)' : 'You lost :-(';
       break;
     default:
       console.assert(false);
@@ -387,11 +387,11 @@ async function simResponse(e) {
       enterGameState(gameGoing);
     } else {
       console.assert(nMatches() === 1);
-      youWon = false;
+      userWon = false;
       enterGameState(gameOver);
     }
   } else {
-    youWon = true;
+    userWon = true;
     enterGameState(gameOver);
   }
   console.log('simulate response end');
@@ -405,7 +405,7 @@ async function processResponse(text) {
   if ('gameContinues' in textJson) {
     let c = textJson.gameContinues;
     if (c === -1) {
-      youWon = true;
+      userWon = true;
       enterGameState(gameOver);
     } else {
       let i = textJson.rowIndex;
@@ -421,12 +421,12 @@ async function processResponse(text) {
       ui_rows[i].classList.remove('btn-warning');
       ui_rows[i].classList.add('btn-black');
       if (c === 0) {
-        youWon = false;
+        userWon = false;
         enterGameState(gameOver);
         //alert shows before row is updated, use setTimeout as workaround
         /*
         setTimeout(function(){
-          youWon = false;
+          userWon = false;
           enterGameState(gameOver);
           }, 1000);
          */
@@ -437,7 +437,8 @@ async function processResponse(text) {
   } else {
     console.assert('error' in textJson);
     showAlert("Error", textJson.error);
-    enterGameState(gameBegin);
+    userWon = true;
+    enterGameState(gameOver);
   }
 }
 
