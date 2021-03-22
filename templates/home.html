@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+  <!-- modal confirm quit -->
+  <div id = "modalQuitConfirm" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Quit?</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Quitting means you lost the game.<br>
+             Do you want to quit?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+          <button type="button" class="btn btn-danger" id="QuitYes">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Matches -->
+  <div class="container my-2" id="matches">
+    <button class="btn btn-black btn-block mb-3" type="button" id="row4">
+      <span class="display-3">I I I I I</span>
+    </button>
+    <button class="btn btn-black btn-block mb-3" type="button" id="row3">
+      <span class="display-3">I I I I</span>
+    </button>
+    <button class="btn btn-black btn-block mb-3" type="button" id="row2">
+      <span class="display-3">I I I</span>
+    </button>
+    <button class="btn btn-black btn-block mb-3" type="button" id="row1">
+      <span class="display-3">I I</span>
+    </button>
+    <button class="btn btn-black btn-block mb-3" type="button" id="row0">
+      <span class="display-3">I</span>
+    </button>
+  </div>
+
+  <!-- Message and Buttons -->
+  <div class="bg-light pb-2 fixed-bottom" id="buttons">
+    <!-- Message Area-->
+    <div class="container my-2">
+      <label for="message" class="sr-only">message</label>
+      <input type="text" readonly class="form-control-plaintext" id="message" value="xxx">
+    </div>
+    <!-- Main Buttons -->
+    <div class="container d-flex justify-content-between">
+      <button class="btn btn-outline-success w-50" type="button" id="OK">OK</button>
+      <button class="btn btn-outline-dark w-20" type="button" id="Cancel">Cancel</button>
+      <button class="btn btn-outline-danger w-20" type="button" id="Quit">Quit</button>
+    </div>
+  </div>
+
+{% endblock content %}

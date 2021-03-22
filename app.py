@@ -26,9 +26,8 @@ app = Flask(__name__)
 @app.route('/')
 def main_page():
     """Main page."""
-    # return 'Hello from MatchTaker. Currently only API!'
     logging.info("main_page")
-    return render_template('index.html')
+    return render_template('home.html')
 
 
 @app.route('/next_move', defaults={'rows_state': '12345', 'level': 0})
