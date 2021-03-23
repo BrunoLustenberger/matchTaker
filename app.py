@@ -24,10 +24,31 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def main_page():
-    """Main page."""
-    logging.info("main_page")
+def home_page():
+    """Home page."""
+    logging.info("home_page")
     return render_template('home.html')
+
+
+@app.route('/rules')
+def rules_page():
+    """rules page."""
+    logging.info("rules_page")
+    return render_template('rules.html')
+
+
+@app.route('/settings')
+def settings_page():
+    """settings page."""
+    logging.info("settings_page")
+    return render_template('settings.html')
+
+
+@app.route('/about')
+def about_page():
+    """about page."""
+    logging.info("about_page")
+    return render_template('about.html')
 
 
 @app.route('/next_move', defaults={'rows_state': '12345', 'level': 0})
