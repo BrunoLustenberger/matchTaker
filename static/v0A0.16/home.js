@@ -1,9 +1,22 @@
-console.log("init module home BEFORE imports");
+console.log("init module home begin");
 import {ui_body, showAlert} from "./base.js";
 import {wait, scrollToMiddle} from "./utils.js";
 console.log("init module home AFTER imports");
 
 const tempVersion = 'a';
+
+//test session storage
+let n = sessionStorage.getItem('dummy');
+if (!n) {
+  console.log("dummy not in storage")
+  sessionStorage.setItem('dummy', String(0));
+} else {
+  console.log(n);
+  n = Number(n);
+  //n = JSON.parse(n);
+  n += 1;
+  sessionStorage.setItem('dummy', n);
+}
 
 
 // model
@@ -294,8 +307,9 @@ loadEventListeners();
  * Handle page-load event.
  */
 function init(e) {
+  console.log('home loadPage');
   console.log(tempVersion);
-  console.log(e);
+  //console.log(e);
   dynamicCss();
   enterGameState(gameBegin);
 }
@@ -474,3 +488,5 @@ function quitYes(e) {
   $("#modalQuitConfirm").modal('hide');
   enterGameState(gameBegin);
 }
+
+console.log("init module home end");
