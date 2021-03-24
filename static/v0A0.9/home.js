@@ -1,3 +1,7 @@
+console.log("init module home BEFORE imports");
+import {ui_body, showAlert} from "./base.js";
+console.log("init module home AFTER imports");
+
 // utils
 const tempVersion = 'x';
 
@@ -167,12 +171,7 @@ const ui_Quit = document.getElementById("Quit");
 const ui_QuitYes = document.getElementById("QuitYes");
 const ui_matches = document.getElementById("matches");
 const ui_message = document.getElementById("message");
-const ui_body = document.querySelector('body');
-const uiNavbar = document.querySelector('.navbar');
 const uiButtons = document.getElementById("buttons");
-const uiAlert = document.getElementById("modalAlert");
-const uiAlertTitle = document.getElementById("modalAlertTitle");
-const uiAlertDetail = document.getElementById("modalAlertDetail");
 
 const ui_rows = [];
 for (let i=0; i<5; i++) {
@@ -194,26 +193,13 @@ function dynamicCss() {
   //console.log(uiNavbar.style.height); --> empty
   //console.log(uiNavbar.getBoundingClientRect().height);
   //ui_body.style.paddingTop = uiNavbar.height(); -- no such function
-  ui_body.style.paddingTop = `${uiNavbar.getBoundingClientRect().height}px`;
+  //ui_body.style.paddingTop = `${uiNavbar.getBoundingClientRect().height}px`; --> base
   //todo: use a css class
   //ui_body.style.paddingBottom = `${ui_OK.getBoundingClientRect().height * 3}px`;
   ui_body.style.paddingBottom = `${uiButtons.getBoundingClientRect().height}px`;
 }
 
 // helper functions
-
-
-/**
- * Shows a modal alert dialog
- * @param {String} title - title resp. short message.
- * @param {String} detail - detailed or additional message.
- */
-function showAlert(title, detail) {
-  //uiAlert.modal(); -- doesn't work
-  uiAlertTitle.innerText = title;
-  uiAlertDetail.innerText = detail;
-  $("#modalAlert").modal(); //this works
-}
 
 /**
  * Shows a row.
