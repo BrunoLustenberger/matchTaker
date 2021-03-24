@@ -1,25 +1,10 @@
 console.log("init module home BEFORE imports");
 import {ui_body, showAlert} from "./base.js";
+import {wait, scrollToMiddle} from "./utils.js";
 console.log("init module home AFTER imports");
 
-// utils
-const tempVersion = 'x';
+const tempVersion = 'a';
 
-function wait(milliseconds) {
-  console.log('wait ' + String(milliseconds));
-  return new Promise(resolve => {
-      setTimeout(() => {
-          resolve()
-      }, milliseconds)
-  })
-}
-
-function scrollToMiddle(element) {
-  let box = element.getBoundingClientRect();
-  let x = box.x + window.pageXOffset;
-  let y = box.y + window.pageYOffset - window.innerHeight / 2;
-  window.scrollTo(x,y);
-}
 
 // model
 // -----
