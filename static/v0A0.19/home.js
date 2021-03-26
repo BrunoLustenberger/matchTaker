@@ -1,7 +1,7 @@
 console.log("init module home begin");
 import {ui_body, showAlert} from "./base.js";
 import {wait, scrollToMiddle} from "./utils.js";
-console.log("init module home AFTER imports");
+import * as state from "./state.js";
 
 const tempVersion = 'a';
 
@@ -19,52 +19,22 @@ if (!n) {
 }
 
 
-// model
-// -----
-
-// rows containing the matches
-let rows;
-let rows_previous;
-
-let selectedRowIndex; //todo: set to undefined or null, when not in use
-let nMatchesTaken; //todo: analog
-
-// game states
-const gameBegin = 0, userSelecting = 1, appSelecting = 2, gameGoing = 3, gameOver = 4;
-let gameState;
-let userWon;
-
-// rules
-let firstMoveByUser = true;
-
-//..
-let simulateResponse = false;
-let appLevel = 0; // smartness of the app as a player
-
-// baseUrl
+//the server
+const simulateResponse = false;
 //const baseUrl = "https://matchtaker.herokuapp.com";
 const baseUrl = "http://localhost:5000";
-
-function resetRows() {
-  rows = [1,2,3,4,5];
-  rows_previous = Array.from(rows);
-}
-
-function nMatches() {
-  return rows.reduce((total,num) => total + num, 0);
-}
 
 /**
  * Computes the parameter for the next_move route
  * @returns {String} - the parameters, with leading slash
- * @example rows == [1,0,3,2,3], appLevel == 1 --> '/10323/1'
+ * @example state.rows == [1,0,3,2,3], appLevel == 1 --> '/10323/1'
  */
 function getNextMoveParams() {
   let result = "/";
   for (let i = 0; i < 5; i++) {
-    result += String(rows[i]);
+    result += String(state.getRow(i));
   }
-  result += "/" + String(appLevel);
+  result += "/" + String(state.appLevel);
   return result;
 }
 
@@ -73,14 +43,14 @@ function getNextMoveParams() {
  * @returns {number} - index of row, from which matches were taken
  */
 function takeMatches() {
-  console.assert(nMatches() > 0);
+  console.assert(state.nMatches() > 0);
   for (let i = 4; i >= 0; i--) {
-    if (rows[i] > 0) {
-      let n = Math.min(3, rows[i]);
-      if (n === nMatches()) {
+    if (state.getRow(i) > 0) {
+      let n = Math.min(3, state.getRow(i));
+      if (n === state.nMatches()) {
         n -= 1; //must not take all matches
       }
-      rows[i] -= n;
+      state.decrRow(i,n);
       return i;
     }
   }
@@ -91,29 +61,29 @@ function takeMatches() {
  */
 function enterGameState(newState) {
   switch (newState) {
-    case gameBegin:
-      resetRows();
+    case state.gameBegin:
+      state.initRows();
       showRows();
       ui_message.value = 'Click Start to begin the game.';
       break;
-    case gameGoing:
-      nMatchesTaken = 0;
-      selectedRowIndex = -1; //undef
-      rows_previous = Array.from(rows);
+    case state.usersTurn:
+      state.zeroNrOfMatchesTaken();
+      state.selectRowIndex(-1);
+      state.saveRows();
       ui_message.value = 'Take matches by clicking on them.';
       break;
-    case userSelecting:
-      let nMoreMatches = Math.min(3-nMatchesTaken, rows[selectedRowIndex]);
+    case state.userSelecting:
+      let nMoreMatches = Math.min(3-state.getNrOfMatchesTaken(), state.getRow(state.getSelectedRowIndex()));
       if (nMoreMatches > 0) {
         ui_message.value = `You can take ${nMoreMatches} more match`
             + (nMoreMatches > 1 ? 'es' : '') + ' from this row.';
-      } else if (rows[selectedRowIndex] > 0) {
+      } else if (state.getRow(state.getSelectedRowIndex()) > 0) {
         ui_message.value = 'You can take no more matches from this row.';
       } else {
         ui_message.value = 'You took the last match from this row.';
       }
       break;
-    case appSelecting:
+    case state.appSelecting:
       ui_message.value = 'Wait for the app to take matches';
       if (simulateResponse) {
         //simulate response
@@ -149,13 +119,13 @@ function enterGameState(newState) {
         //alert('send request end');
       }
       break;
-    case gameOver:
-      ui_message.value = userWon ? 'You won! :-)' : 'You lost :-(';
+    case state.gameOver:
+      ui_message.value = state.getUserWon() ? 'You won! :-)' : 'You lost :-(';
       break;
     default:
       console.assert(false);
   }
-  gameState = newState;
+  state.setGameState(newState);
   setButtons();
 }
 
@@ -204,7 +174,7 @@ function dynamicCss() {
  * @param {Number} rowIndex - index of row.
  */
 function showRow(rowIndex) {
-  let n = rows[rowIndex];
+  let n = state.getRow(rowIndex);
   let s = '';
   if (n > 0) {
     s = 'I';
@@ -246,32 +216,32 @@ function enableButton(id, enable) {
  * Sets the buttons depending on gameState
  */
 function setButtons() {
-  switch (gameState) {
-    case gameBegin:
+  switch (state.getGameState()) {
+    case state.gameBegin:
       ui_OK.innerText = 'Start';
       enableButton("OK", true);
       enableButton("Cancel", false);
       enableButton("Quit", false);
       break;
-    case gameGoing:
+    case state.usersTurn:
       ui_OK.innerText = 'OK';
       enableButton("OK", false);
       enableButton("Cancel", false);
       enableButton("Quit", true);
       break;
-    case userSelecting:
+    case state.userSelecting:
       ui_OK.innerText = 'OK';
       enableButton("OK", true);
       enableButton("Cancel", true);
       enableButton("Quit", true);
       break;
-    case gameOver:
+    case state.gameOver:
       ui_OK.innerText = 'OK';
       enableButton("OK", true);
       enableButton("Cancel", false);
       enableButton("Quit", false);
       break;
-    case appSelecting:
+    case state.appSelecting:
       ui_OK.innerText = 'OK';
       enableButton("OK", false);
       enableButton("Cancel", false);
@@ -311,7 +281,7 @@ function init(e) {
   console.log(tempVersion);
   //console.log(e);
   dynamicCss();
-  enterGameState(gameBegin);
+  enterGameState(state.gameBegin);
 }
 
 /**
@@ -321,7 +291,7 @@ function matches(e) {
   const t = e.target;
   console.log(`${t} clicked`);
   // the event only has an effect for the following 2 states
-  if (gameState === userSelecting || gameState === gameGoing) {
+  if (state.getGameState() === state.userSelecting || state.getGameState() === state.usersTurn) {
     // additionally: the user must click on or near a symbol representing a match.
     if (t.nodeName === 'SPAN') {
       const p = t.parentElement;
@@ -329,13 +299,13 @@ function matches(e) {
       //console.log(i)
       i = Number(i);
       //console.log(ui_rows[i]);
-      if (gameState === gameGoing) { // first click of this move
-        selectedRowIndex = i;
+      if (state.getGameState() === state.usersTurn) { // first click of this move
+        state.selectRowIndex(i);
       }
-      if (i === selectedRowIndex) { // the same row as before was clicked, or first click
-        if (nMatchesTaken < 3) { // max not yet done
-          rows[i] -= 1;
-          nMatchesTaken += 1;
+      if (i === state.getSelectedRowIndex()) { // the same row as before was clicked, or first click
+        if (state.getNrOfMatchesTaken() < 3) { // max not yet done
+          state.decrRow(i,1);
+          state.incrNrOfMatchesTaken(1);
           showRow(i);
         } else {
           showAlert('No more matches', 'You cannot take more than 3 matches. Click OK or Cancel!');
@@ -343,8 +313,8 @@ function matches(e) {
       } else { // another row than the one before was clicked
         showAlert('Other row', 'To take matches from another row, click Cancel first!');
       }
-      // remain in state userSelecting or enter it
-      enterGameState(userSelecting);
+      // remain in state state.userSelecting or enter it
+      enterGameState(state.userSelecting);
     } else {
       console.log("clicked outside of matches");
     }
@@ -358,7 +328,7 @@ function matches(e) {
  */
 async function simResponse(e) {
   console.log('simulate response begin');
-  if (nMatches() > 1) {
+  if (state.nMatches() > 1) {
     let i = takeMatches();
     ui_rows[i].classList.remove('btn-black');
     ui_rows[i].classList.add('btn-warning');
@@ -368,16 +338,16 @@ async function simResponse(e) {
     await wait(1000);
     ui_rows[i].classList.remove('btn-warning');
     ui_rows[i].classList.add('btn-black');
-    if (nMatches() > 1) {
-      enterGameState(gameGoing);
+    if (state.nMatches() > 1) {
+      enterGameState(state.usersTurn);
     } else {
-      console.assert(nMatches() === 1);
-      userWon = false;
-      enterGameState(gameOver);
+      console.assert(state.nMatches() === 1);
+      state.setUserWon(false);
+      enterGameState(state.gameOver);
     }
   } else {
-    userWon = true;
-    enterGameState(gameOver);
+    state.setUserWon(true);
+    enterGameState(state.gameOver);
   }
   console.log('simulate response end');
 }
@@ -390,8 +360,8 @@ async function processResponse(text) {
   if ('gameContinues' in textJson) {
     let c = textJson.gameContinues;
     if (c === -1) {
-      userWon = true;
-      enterGameState(gameOver);
+      state.setUserWon(true);
+      enterGameState(state.gameOver);
     } else {
       let i = textJson.rowIndex;
       let n = textJson.numberOfMatches;
@@ -400,30 +370,30 @@ async function processResponse(text) {
       ui_rows[i].classList.add('btn-warning');
       scrollToMiddle(ui_rows[i]);
       await wait(1000);
-      rows[i] -= n;
+      state.decrRow(i,n);
       showRow(i);
       await wait(1000);
       ui_rows[i].classList.remove('btn-warning');
       ui_rows[i].classList.add('btn-black');
       if (c === 0) {
-        userWon = false;
-        enterGameState(gameOver);
+        state.setUserWon(false);
+        enterGameState(state.gameOver);
         //alert shows before row is updated, use setTimeout as workaround
         /*
         setTimeout(function(){
-          userWon = false;
-          enterGameState(gameOver);
+          state.setUserWon(false);
+          enterGameState(state.gameOver);
           }, 1000);
          */
       } else {
-        enterGameState(gameGoing);
+        enterGameState(state.usersTurn);
       }
     }
   } else {
     console.assert('error' in textJson);
     showAlert("Error", textJson.error);
-    userWon = true;
-    enterGameState(gameOver);
+    state.setUserWon(true);
+    enterGameState(state.gameOver);
   }
 }
 
@@ -432,16 +402,16 @@ async function processResponse(text) {
  */
 function ok(e) {
   console.log("ok clicked");
-  if (gameState === gameBegin) {
-    if (firstMoveByUser) {
-      enterGameState(gameGoing);
+  if (state.getGameState() === state.gameBegin) {
+    if (state.firstMoveByUser) {
+      enterGameState(state.usersTurn);
     } else {
-      enterGameState(appSelecting);
+      enterGameState(state.appSelecting);
     }
-  } else if (gameState === userSelecting) {
-    enterGameState(appSelecting);
-  } else if (gameState === gameOver) {
-    enterGameState(gameBegin);
+  } else if (state.getGameState() === state.userSelecting) {
+    enterGameState(state.appSelecting);
+  } else if (state.getGameState() === state.gameOver) {
+    enterGameState(state.gameBegin);
   } else {
     console.log("ok has no effect")
   }
@@ -452,12 +422,12 @@ function ok(e) {
  */
 function cancel(e) {
   console.log("cancel clicked")
-  if (gameState === userSelecting) {
-    // reset selected row
-    rows[selectedRowIndex] = rows_previous[selectedRowIndex];
-    showRow(selectedRowIndex);
+  if (state.getGameState() === state.userSelecting) {
+    // restore selected row
+    state.restoreRow(state.getSelectedRowIndex());
+    showRow(state.getSelectedRowIndex());
     // new state
-    enterGameState(gameGoing);
+    enterGameState(state.usersTurn);
   } else {
     console.log("cancel has no effect")
   }
@@ -468,10 +438,10 @@ function cancel(e) {
  */
 function quit(e) {
   console.log("quit clicked")
-  if (gameState === userSelecting || gameState === gameGoing) {
+  if (state.getGameState() === state.userSelecting || state.getGameState() === state.usersTurn) {
     /*
     if (confirm("Quitting means you lost the game!")) {
-      enterGameState(gameBegin);
+      enterGameState(state.gameBegin);
     }
     */
     $("#modalQuitConfirm").modal('show');
@@ -486,7 +456,7 @@ function quit(e) {
 function quitYes(e) {
   console.log("quitYes clicked");
   $("#modalQuitConfirm").modal('hide');
-  enterGameState(gameBegin);
+  enterGameState(state.gameBegin);
 }
 
 console.log("init module home end");
