@@ -5,20 +5,6 @@ import * as state from "./state.js";
 
 const tempVersion = 'a';
 
-//test session storage
-let n = sessionStorage.getItem('dummy');
-if (!n) {
-  console.log("dummy not in storage")
-  sessionStorage.setItem('dummy', String(0));
-} else {
-  console.log(n);
-  n = Number(n);
-  //n = JSON.parse(n);
-  n += 1;
-  sessionStorage.setItem('dummy', n);
-}
-
-
 //the server
 const simulateResponse = false;
 //const baseUrl = "https://matchtaker.herokuapp.com";
@@ -43,11 +29,11 @@ function getNextMoveParams() {
  * @returns {number} - index of row, from which matches were taken
  */
 function takeMatches() {
-  console.assert(state.nMatches() > 0);
+  console.assert(state.totalNrOfMatches() > 0);
   for (let i = 4; i >= 0; i--) {
     if (state.getRow(i) > 0) {
       let n = Math.min(3, state.getRow(i));
-      if (n === state.nMatches()) {
+      if (n === state.totalNrOfMatches()) {
         n -= 1; //must not take all matches
       }
       state.decrRow(i,n);
@@ -69,7 +55,7 @@ function enterGameState(newState) {
     case state.usersTurn:
       state.zeroNrOfMatchesTaken();
       state.selectRowIndex(-1);
-      state.saveRows();
+      state.backupRows();
       ui_message.value = 'Take matches by clicking on them.';
       break;
     case state.userSelecting:
@@ -281,7 +267,14 @@ function init(e) {
   console.log(tempVersion);
   //console.log(e);
   dynamicCss();
-  enterGameState(state.gameBegin);
+  // Restart the game, but only if a new browser session is starting.
+  // Otherwise: recreate the display of the current state
+  if (! state.getGameState()) {
+    enterGameState(state.gameBegin);
+  } else {
+    enterGameState(state.getGameState());
+    showRows();
+  }
 }
 
 /**
@@ -328,7 +321,7 @@ function matches(e) {
  */
 async function simResponse(e) {
   console.log('simulate response begin');
-  if (state.nMatches() > 1) {
+  if (state.totalNrOfMatches() > 1) {
     let i = takeMatches();
     ui_rows[i].classList.remove('btn-black');
     ui_rows[i].classList.add('btn-warning');
@@ -338,10 +331,10 @@ async function simResponse(e) {
     await wait(1000);
     ui_rows[i].classList.remove('btn-warning');
     ui_rows[i].classList.add('btn-black');
-    if (state.nMatches() > 1) {
+    if (state.totalNrOfMatches() > 1) {
       enterGameState(state.usersTurn);
     } else {
-      console.assert(state.nMatches() === 1);
+      console.assert(state.totalNrOfMatches() === 1);
       state.setUserWon(false);
       enterGameState(state.gameOver);
     }
