@@ -2,15 +2,25 @@
 
 {% block content %}
 
-  <!-- xxx -->
-  <div class="container">
-    <p>settings page. <br>
-      xxx
-    </p>
+  <!-- who begins -->
+  <div class="container" id="whoBegins">
+    <p>Who begins?</p>
+    <div class="form-check pt-1">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="optradio" id="radioYou">You
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="optradio" id="radioApp">App
+      </label>
+    </div>
   </div>
+
+
 
 {% endblock content %}
 
 {% block scripts %}
-  <script type="module" src="../static/v0B0.0/settings.js"></script>
+  <script type="module" src="../static/v0B0.19/settings.js"></script>
 {% endblock scripts %}

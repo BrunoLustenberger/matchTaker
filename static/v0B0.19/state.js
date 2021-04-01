@@ -92,7 +92,6 @@ export function setUserWon(b) {
 
 // todo: later to settings
 
-export const firstMoveByUser = true;
 export const appLevel = 0; // smartness of the app as a player
 
 console.log("init module state end");

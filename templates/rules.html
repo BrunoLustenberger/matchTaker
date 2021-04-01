@@ -2,15 +2,28 @@
 
 {% block content %}
 
-  <!-- xxx -->
+  <!-- explaining the rules -->
   <div class="container">
-    <p>rules page. <br>
-      xxx
-    </p>
+    <h2 class="bt-2">Rules</h2>
+    <ol class="list-group-numbered">
+      <li class="list-group-item">
+        The game contains 5 rows of matches. The row at the bottom contains 1 match, the 2nd lowest row contains 2 matches, etc.
+      </li>
+      <li class="list-group-item">
+        Two players take matches alternately. When it is their turn, each player:
+        <ol class="list-group-roman">
+          <li class="list-group-item">must take at least 1 match,</li>
+          <li class="list-group-item">may take at most 3 matches,</li>
+          <li class="list-group-item">must take all matches from the same row.</li>
+        </ol>
+      </li>
+      <li class="list-group-item">The player, who has to take the last match, looses.</li>
+    </ol>
+    <p>You play against the app. Under Settings you can define, who starts the game and how cleverly the app should play.</p>
   </div>
 
 {% endblock content %}
 
 {% block scripts %}
-  <script type="module" src="../static/v0B0.0/rules.js"></script>
+  <script type="module" src="../static/v0B0.19/rules.js"></script>
 {% endblock scripts %}

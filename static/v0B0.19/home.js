@@ -2,6 +2,7 @@ console.log("init module home begin");
 import {ui_body, showAlert} from "./base.js";
 import {wait, scrollToMiddle} from "./utils.js";
 import * as state from "./state.js";
+import * as settings_ from "./settings_.js"
 
 const tempVersion = 'a';
 
@@ -396,7 +397,7 @@ async function processResponse(text) {
 function ok(e) {
   console.log("ok clicked");
   if (state.getGameState() === state.gameBegin) {
-    if (state.firstMoveByUser) {
+    if (settings_.userBegins()) {
       enterGameState(state.usersTurn);
     } else {
       enterGameState(state.appSelecting);
