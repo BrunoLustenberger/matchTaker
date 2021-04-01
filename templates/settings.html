@@ -1,22 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <div class="container">
+    <h2 class="bt-2">Settings</h2>
+    <!-- who begins -->
+    <div class="container" id="whoBegins">
+      <p class="pb-0 mb-0">Who begins?</p>
+      <div class="form-check pt-0 mt-0">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optradio" id="radioYou">You
+        </label>
+      </div>
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optradio" id="radioApp">App
+        </label>
+      </div>
+    </div>
 
-  <!-- who begins -->
-  <div class="container" id="whoBegins">
-    <p>Who begins?</p>
-    <div class="form-check pt-1">
-      <label class="form-check-label">
-        <input type="radio" class="form-check-input" name="optradio" id="radioYou">You
-      </label>
+    <!-- smartness -->
+    <div class="container" id="howSmart">
+      <p class="pb-0 mb-0 mt-3">As a player the app should be:</p>
+      <div class="form-check pt-0 mt-0">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optradio" id="radioDump">dumb
+        </label>
+      </div>
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optradio" id="radioMediocre">mediocre
+        </label>
+      </div>
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optradio" id="radioSmart">smart
+        </label>
+      </div>
     </div>
-    <div class="form-check">
-      <label class="form-check-label">
-        <input type="radio" class="form-check-input" name="optradio" id="radioApp">App
-      </label>
+
+    <!-- later -->
+    <div class="container">
+      <p class="pb-0 mb-0 mt-3">Later versions will allow you to:</p>
+      <ul class="list-group">
+        <li class="list-group-item">set the number of rows,</li>
+        <li class="list-group-item">set the maximum number of matches that can be taken in a row,</li>
+        <li class="list-group-item">define, whether the last match looses or wins.</li>
+      </ul>
     </div>
+
   </div>
-
 
 
 {% endblock content %}
