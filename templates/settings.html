@@ -8,12 +8,13 @@
       <p class="pb-0 mb-0">Who begins?</p>
       <div class="form-check pt-0 mt-0">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio" id="radioYou">You
+          <input type="radio" class="form-check-input" name="optBegin" id="radioYou">You
+          <!-- Note: a common name for all options is needed apparently for BS 4 -->
         </label>
       </div>
       <div class="form-check">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio" id="radioApp">App
+          <input type="radio" class="form-check-input" name="optBegin" id="radioApp">App
         </label>
       </div>
     </div>
@@ -23,17 +24,17 @@
       <p class="pb-0 mb-0 mt-3">As a player the app should be:</p>
       <div class="form-check pt-0 mt-0">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio" id="radioDump">dumb
+          <input type="radio" class="form-check-input" name="optLevel" id="radioDumb">dumb
         </label>
       </div>
       <div class="form-check">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio" id="radioMediocre">mediocre
+          <input type="radio" class="form-check-input" name="optLevel" id="radioMediocre">mediocre
         </label>
       </div>
       <div class="form-check">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio" id="radioSmart">smart
+          <input type="radio" class="form-check-input" name="optLevel" id="radioSmart">smart
         </label>
       </div>
     </div>
@@ -54,5 +55,5 @@
 {% endblock content %}
 
 {% block scripts %}
-  <script type="module" src="../static/v0B0.19/settings.js"></script>
+  <script type="module" src="../static/v0B0.23/settings.js"></script>
 {% endblock scripts %}

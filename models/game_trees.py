@@ -50,6 +50,9 @@ import random
 
 from models.game_states import GameState, GameMove
 
+import logging
+from utils import mylogconfig
+
 rand = random.Random()
 rand.seed(a=1)  # a=1 for reproducibility
 
@@ -124,6 +127,7 @@ class GameNode:
             total_count = self.game_state.get_total_count()
             candidates = [child for child in self.children if child.game_state.get_total_count() == total_count - 1]
         assert len(candidates) > 0
+        logging.info(f"number of candidate moves: {len(candidates)}")
         node = rand.choice(candidates)
         game_move = self.game_state.get_move(node.game_state)
         return game_move, node.winning

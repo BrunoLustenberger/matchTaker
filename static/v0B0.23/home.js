@@ -2,7 +2,7 @@ console.log("init module home begin");
 import {ui_body, showAlert} from "./base.js";
 import {wait, scrollToMiddle} from "./utils.js";
 import * as state from "./state.js";
-import * as settings_ from "./settings_.js"
+import * as ss from "./settings_.js"
 
 const tempVersion = 'a';
 
@@ -14,14 +14,14 @@ const baseUrl = "http://localhost:5000";
 /**
  * Computes the parameter for the next_move route
  * @returns {String} - the parameters, with leading slash
- * @example state.rows == [1,0,3,2,3], appLevel == 1 --> '/10323/1'
+ * @example state.rows == [1,0,3,2,3], ss.getHowSmart() === 1 --> '/10323/1'
  */
 function getNextMoveParams() {
   let result = "/";
   for (let i = 0; i < 5; i++) {
     result += String(state.getRow(i));
   }
-  result += "/" + String(state.appLevel);
+  result += "/" + String(ss.getHowSmart());
   return result;
 }
 
@@ -397,7 +397,7 @@ async function processResponse(text) {
 function ok(e) {
   console.log("ok clicked");
   if (state.getGameState() === state.gameBegin) {
-    if (settings_.userBegins()) {
+    if (ss.userBegins()) {
       enterGameState(state.usersTurn);
     } else {
       enterGameState(state.appSelecting);
