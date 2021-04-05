@@ -12,6 +12,7 @@ The following URLs are served:
 import json
 
 from flask import Flask, render_template
+from flask_talisman import Talisman
 
 import logging
 from utils import mylogconfig
@@ -21,6 +22,7 @@ from models.game_states import GameState  # , GameMove
 from models.game_trees import set_current_tree
 
 app = Flask(__name__)
+Talisman(app)
 
 
 @app.route('/')

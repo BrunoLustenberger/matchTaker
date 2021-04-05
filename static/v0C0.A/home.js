@@ -8,8 +8,8 @@ const tempVersion = 'a';
 
 //the server
 const simulateResponse = false;
-//const baseUrl = "https://matchtaker.herokuapp.com";
-const baseUrl = "http://localhost:5000";
+const baseUrl = "https://matchtaker.herokuapp.com";
+//const baseUrl = "http://localhost:5000";
 
 /**
  * Computes the parameter for the next_move route
