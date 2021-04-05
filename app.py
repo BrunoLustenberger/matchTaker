@@ -51,6 +51,13 @@ def about_page():
     return render_template('about.html')
 
 
+@app.route('/email')
+def email_page():
+    """email page."""
+    logging.info("email_page")
+    return render_template('email.html')
+
+
 @app.route('/next_move', defaults={'rows_state': '12345', 'level': 0})
 @app.route('/next_move/<rows_state>', defaults={'level': 0})
 @app.route('/next_move/<rows_state>/<int:level>')
