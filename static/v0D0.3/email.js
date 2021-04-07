@@ -2,7 +2,7 @@ console.log("init module email begin"); //--use import.meta.url
 import {showAlert} from "./base.js";
 
 //...
-const ea1="brn.lst", ea2="nbrgr@gm", ea3="ail.c", ea4 = "om";
+const ea1="bl@m", ea2="atc", ea3="htaker.n", ea4 = "et";
 
 // ui elements
 const uiF1 = document.getElementById("F1");

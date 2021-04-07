@@ -32,7 +32,7 @@ export function setHowSmart(level) {
 export function getHowSmart() {
   let howSmart = sessionStorage.getItem('howSmart');
   if (!howSmart) { // new session
-    setHowSmart(beMediocre);
+    setHowSmart(beSmart);
     howSmart = sessionStorage.getItem('howSmart');
   }
   return JSON.parse(howSmart);

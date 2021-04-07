@@ -72,7 +72,7 @@ function enterGameState(newState) {
       }
       break;
     case state.appSelecting:
-      ui_message.value = 'Wait for the app to take matches';
+      ui_message.value = 'The app is taking matches ...';
       if (simulateResponse) {
         //simulate response
         console.log('fire simulated response begin')
