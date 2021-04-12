@@ -1,2 +1,2 @@
 # matchTaker
-A game which can be represented by a dag (directed acyclic graph). The player beginning the game has a safe strategy to win. 
+A game which can be represented by a dag (directed acyclic graph). The player beginning the game has a safe strategy to win. For the app it is easy to find this strategy, as it builds the dag of the entire game at startup. For a human player it is a bit more challenging...
