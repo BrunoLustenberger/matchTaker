@@ -8,8 +8,8 @@ const tempVersion = 'a';
 
 //the server
 const simulateResponse = false;
-//const baseUrl = "https://matchtaker.herokuapp.com";
 //const baseUrl = "http://localhost:5000";
+//const baseUrl = "https://matchtaker.herokuapp.com";
 //const baseUrl = "http://www.matchtaker.net";
 const baseUrl = "https://bmsl0.herokuapp.com";
 
@@ -62,7 +62,11 @@ function enterGameState(newState) {
       ui_message.value = 'Take matches by clicking on them.';
       break;
     case state.userSelecting:
-      let nMoreMatches = Math.min(3-state.getNrOfMatchesTaken(), state.getRow(state.getSelectedRowIndex()));
+      let nThisRow = state.getRow(state.getSelectedRowIndex()); // number of matches in this row
+      if (nThisRow === state.totalNrOfMatches()) { //only this row remains
+        nThisRow -= 1;
+      }
+      let nMoreMatches = Math.min(3-state.getNrOfMatchesTaken(), nThisRow);
       if (nMoreMatches > 0) {
         ui_message.value = `You can take ${nMoreMatches} more match`
             + (nMoreMatches > 1 ? 'es' : '') + ' from this row.';
@@ -294,15 +298,21 @@ function matches(e) {
       let i = p.id[3]; // the char at this index gives the row-index
       //console.log(i)
       i = Number(i);
+      console.assert(state.getRow(i) > 0);
       //console.log(ui_rows[i]);
       if (state.getGameState() === state.usersTurn) { // first click of this move
+        console.assert(state.totalNrOfMatches() > 1);
         state.selectRowIndex(i);
       }
       if (i === state.getSelectedRowIndex()) { // the same row as before was clicked, or first click
         if (state.getNrOfMatchesTaken() < 3) { // max not yet done
-          state.decrRow(i,1);
-          state.incrNrOfMatchesTaken(1);
-          showRow(i);
+          if (state.totalNrOfMatches() > 1) { // normal case
+            state.decrRow(i,1);
+            state.incrNrOfMatchesTaken(1);
+            showRow(i);
+          } else { //special case: user tries to take the last match
+            showAlert('Last match', 'You cannot take the last match. Click OK, you have won! (see Rules)');
+          }
         } else {
           showAlert('No more matches', 'You cannot take more than 3 matches. Click OK or Cancel!');
         }

@@ -11,7 +11,7 @@ const uiF2 = document.getElementById("F2");
 const uiEmail = document.getElementById("email")
 
 // event handlers
-document.addEventListener('click', handleShow);
+document.addEventListener('click', handleShow); //todo: attach to uiShow
 document.addEventListener('DOMContentLoaded', handlePageLoaded);
 
 // show
